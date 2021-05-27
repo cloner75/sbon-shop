@@ -48,18 +48,18 @@ class Connection {
         let dbConfig = {
             auth: 'authSource=admin&w=1'
         };
-        // switch (process.env.NODE_ENV) {
-        // case 'production':
-        Object.assign(dbConfig, {
-            address: `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DATABASE}`
-        });
-        //     break;
-        // case 'development':
-        //     Object.assign(dbConfig, {
-        //         address: `mongodb://127.0.0.1:27017/${MONGO_DATABASE}`
-        //     });
-        //     break;
-        // }
+        switch (process.env.NODE_ENV) {
+            case 'production':
+                Object.assign(dbConfig, {
+                    address: `mongodb://${MONGO_USERNAME}:4V5Z!M*pTgBsZiNOp#DK%Hq@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DATABASE}`
+                });
+                break;
+            case 'development':
+                Object.assign(dbConfig, {
+                    address: `mongodb://127.0.0.1:27017/${MONGO_DATABASE}`
+                });
+                break;
+        }
         if (mongoose.connection.readyState === 0) {
             mongoose.connect(
                 `${dbConfig.address}?${dbConfig.auth}`,
