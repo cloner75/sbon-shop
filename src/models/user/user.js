@@ -15,7 +15,7 @@ const schema = new Schema(
         status: { type: Number, required: false, default: 0 },
         type: { type: Number, required: false, default: 0 },
         email: { type: String, required: false },
-        username: { type: String, required: false, min: 8 },
+        username: { type: String, required: false, min: 8, index: true },
         name: { type: String, required: false },
         family: { type: String, required: false },
         avatar: { type: String, required: false, default: null },
@@ -51,6 +51,17 @@ const schema = new Schema(
             check: { type: String, required: false },
             turnover: { type: String, required: false },
             nationalCard: { type: String, required: false },
+        },
+        sbon: {
+            count: { type: Number, default: 0 },
+            customerCode: { type: String, required: true },
+            history: [
+                {
+                    transactionName: { type: String, required: false },
+                    amount: { type: Number, required: false },
+                    createdAt: { type: Date, default: Date.now() }
+                }
+            ]
         }
     },
     {
