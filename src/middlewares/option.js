@@ -47,6 +47,7 @@ export default {
                         .valid('createdAt', 'updatedAt'),
                     order: joi.string().trim().valid('asc', 'desc'),
                     fields: joi.string().trim(),
+                    key: joi.string().trim()
                 })
         },
         validatorCompiler: ({ schema }) => {
@@ -75,6 +76,7 @@ export default {
                         .valid('createdAt', 'updatedAt', 'minishopId'),
                     order: joi.string().trim().valid('asc', 'desc'),
                     fields: joi.string().trim(),
+                    key: joi.string().trim()
                 })
                 .unknown(),
         },
