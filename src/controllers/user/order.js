@@ -188,7 +188,7 @@ export default class OrderController extends OfferService {
                         LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
                         Amount: getOrder.payment,
                         OrderId: getOrder.orderId,
-                        CallBackUrl: `https://sbon.ir/pay/${getOrder.orderId}`
+                        CallBackUrl: `https://sbon.ir/api/v1/user/pay/${getOrder.orderId}`
                     }
                 });
                 if (result.SalePaymentRequestResult.Token === 0) {
