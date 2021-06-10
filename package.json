@@ -27,6 +27,8 @@
     "fast-csv": "^4.3.6",
     "fastify": "^3.8.0",
     "fastify-express": "^0.3.2",
+    "fastify-formbody": "^5.0.0",
+    "fastify-multipart": "^4.0.6",
     "fastify-static": "^4.0.1",
     "frameguard": "^3.1.0",
     "helmet": "^4.4.1",
