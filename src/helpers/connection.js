@@ -1,5 +1,7 @@
 // Packages
 import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+
 
 /**
  * @description :: Class For Connection Service
@@ -18,6 +20,8 @@ class Connection {
      * @description :: Setting And Router
      */
     async settings() {
+        this.app.register(require('fastify-multipart'))
+        this.app.register(require('fastify-formbody'))
         this.app.register(require('./../routers/product'), { logLevel: 'info', prefix: '/api/v1/product' });
         this.app.register(require('./../routers/option'), { logLevel: 'info', prefix: '/api/v1/option' });
         this.app.register(require('./../routers/user'), { logLevel: 'info', prefix: '/api/v1/user' });
@@ -26,10 +30,9 @@ class Connection {
         this.app.register(require('./../routers/pay'), { logLevel: 'info', prefix: '/pay' });
 
         await this.app.register(require('fastify-express'));
-
-        fastify.register(require('fastify-multipart'))
-        fastify.register(require('fastify-formbody'))
-
+        
+        this.app.use(bodyParser.json()); // support json encoded bodies
+        this.app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
         this.app.use(require('cors')());
         this.app.use(require('dns-prefetch-control')());
         this.app.use(require('frameguard')());
@@ -61,7 +64,7 @@ class Connection {
                 break;
             case 'development':
                 Object.assign(dbConfig, {
-                    address: `mongodb://127.0.0.1:27017/${MONGO_DATABASE}`
+                    address: `mongodb://192.168.1.186:27017/${MONGO_DATABASE}`
                 });
                 break;
         }
