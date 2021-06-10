@@ -26,6 +26,10 @@ class Connection {
         this.app.register(require('./../routers/pay'), { logLevel: 'info', prefix: '/pay' });
 
         await this.app.register(require('fastify-express'));
+
+        fastify.register(require('fastify-multipart'))
+        fastify.register(require('fastify-formbody'))
+
         this.app.use(require('cors')());
         this.app.use(require('dns-prefetch-control')());
         this.app.use(require('frameguard')());
