@@ -20,15 +20,15 @@ class Connection {
      * @description :: Setting And Router
      */
     async settings() {
-        this.app.register(require('fastify-multipart'))
-        this.app.register(require('fastify-formbody'))
         this.app.register(require('./../routers/product'), { logLevel: 'info', prefix: '/api/v1/product' });
         this.app.register(require('./../routers/option'), { logLevel: 'info', prefix: '/api/v1/option' });
         this.app.register(require('./../routers/user'), { logLevel: 'info', prefix: '/api/v1/user' });
         this.app.register(require('./../routers/telegram'), { logLevel: 'info', prefix: '/api/v1/bot' });
         this.app.register(require('./../routers/csv'), { logLevel: 'info', prefix: '/api/v1/csv' });
         this.app.register(require('./../routers/pay'), { logLevel: 'info', prefix: '/pay' });
-
+        
+        await this.app.register(require('fastify-multipart'))
+        await this.app.register(require('fastify-formbody'))
         await this.app.register(require('fastify-express'));
         
         this.app.use(bodyParser.json()); // support json encoded bodies
