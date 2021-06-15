@@ -25,12 +25,10 @@ class Connection {
         this.app.register(require('./../routers/user'), { logLevel: 'info', prefix: '/api/v1/user' });
         this.app.register(require('./../routers/telegram'), { logLevel: 'info', prefix: '/api/v1/bot' });
         this.app.register(require('./../routers/csv'), { logLevel: 'info', prefix: '/api/v1/csv' });
+        this.app.register(require('./../routers/minishop'), { logLevel: 'info', prefix: '/api/v1/minishop' });
         this.app.register(require('./../routers/pay'), { logLevel: 'info', prefix: '/pay' });
-        
-        await this.app.register(require('fastify-multipart'))
-        await this.app.register(require('fastify-formbody'))
-        await this.app.register(require('fastify-express'));
-        
+
+        await this.app.register(require('fastify-express'));        
         this.app.use(bodyParser.json()); // support json encoded bodies
         this.app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
         this.app.use(require('cors')());
