@@ -62,7 +62,7 @@ class Connection {
                 break;
             case 'development':
                 Object.assign(dbConfig, {
-                    address: `mongodb://192.168.1.186:27017/${MONGO_DATABASE}`
+                    address: `mongodb://127.0.0.1:27017/${MONGO_DATABASE}`
                 });
                 break;
         }

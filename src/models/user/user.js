@@ -28,7 +28,7 @@ const schema = new Schema(
             lng: { type: String, required: true },
             originalAddress: { type: String, required: true },
             state: { type: String, required: true },
-            county: { type: String, required: true },
+            country: { type: String, required: false },
             city: { type: String, required: true },
             village: { type: String, required: true },
             zipCode: { type: String, required: true },
