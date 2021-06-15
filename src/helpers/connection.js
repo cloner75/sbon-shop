@@ -23,6 +23,7 @@ class Connection {
         this.app.register(require('./../routers/user'), { logLevel: 'info', prefix: '/api/v1/user' });
         this.app.register(require('./../routers/telegram'), { logLevel: 'info', prefix: '/api/v1/bot' });
         this.app.register(require('./../routers/csv'), { logLevel: 'info', prefix: '/api/v1/csv' });
+        this.app.register(require('./../routers/minishop'), { logLevel: 'info', prefix: '/api/v1/minishop' });
 
         await this.app.register(require('fastify-express'));
         this.app.use(require('cors')());
