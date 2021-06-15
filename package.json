@@ -50,6 +50,7 @@
     "role-acl": "^4.5.4",
     "soap": "^0.36.0",
     "strong-soap": "^3.0.0",
+    "uuid": "^8.3.2",
     "x-xss-protection": "^2.0.0"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 // Packages
 import { hotp } from 'otplib';
 import bcrypt from 'bcrypt';
-import axios from 'axios';
+import { v4 } from 'uuid';
 
 // Models
 import UserModel from './../../models/user/user';
@@ -19,6 +19,9 @@ import configs from './../../configs/config';
 
 // Consts
 const USER = 'user';
+const REGISTER_TRANSACTION = 'ثبت نام';
+const LOGIN_TRANSACTION = 'اولین ورود';
+const DEFAULT_SBON = 0;
 const jwt = new JWT();
 const transaction = new Transaction();
 
@@ -158,7 +161,17 @@ export default class UserController {
             const hash = await bcrypt.hashSync(password, salt);
             const completeUser = await UserModel.findOneAndUpdate(
                 { phone, status: 0 },
-                { username, password: hash, salt, status: 1 },
+                {
+                    username, password: hash, salt, status: 1, sbon: {
+                        count: 0,
+                        customerCode: v4(),
+                        history: [{
+                            transactionName: REGISTER_TRANSACTION,
+                            amount: DEFAULT_SBON,
+                            createdAt: Date.now()
+                        }]
+                    }
+                },
                 { new: true }
             );
 
@@ -214,6 +227,21 @@ export default class UserController {
                         message: '200',
                         time: start - Date.now()
                     });
+                    if (!result.sbon || !result.sbon.customerCode) {
+                        UserModel.updateOne({ _id: result._id }, {
+                            $set: {
+                                sbon: {
+                                    count: 0,
+                                    customerCode: v4(),
+                                    history: [{
+                                        transactionName: LOGIN_TRANSACTION,
+                                        amount: DEFAULT_SBON,
+                                        createdAt: Date.now()
+                                    }]
+                                }
+                            }
+                        });
+                    }
                     return reply.send(Response.generator(200, { token: await jwt.generate(result) }));
                 }
             }
