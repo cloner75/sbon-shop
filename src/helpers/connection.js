@@ -1,5 +1,7 @@
 // Packages
 import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+
 
 /**
  * @description :: Class For Connection Service
@@ -24,8 +26,11 @@ class Connection {
         this.app.register(require('./../routers/telegram'), { logLevel: 'info', prefix: '/api/v1/bot' });
         this.app.register(require('./../routers/csv'), { logLevel: 'info', prefix: '/api/v1/csv' });
         this.app.register(require('./../routers/minishop'), { logLevel: 'info', prefix: '/api/v1/minishop' });
+        this.app.register(require('./../routers/pay'), { logLevel: 'info', prefix: '/pay' });
 
-        await this.app.register(require('fastify-express'));
+        await this.app.register(require('fastify-express'));        
+        this.app.use(bodyParser.json()); // support json encoded bodies
+        this.app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
         this.app.use(require('cors')());
         this.app.use(require('dns-prefetch-control')());
         this.app.use(require('frameguard')());
@@ -57,7 +62,7 @@ class Connection {
                 break;
             case 'development':
                 Object.assign(dbConfig, {
-                    address: `mongodb://127.0.0.1:27017/${MONGO_DATABASE}`
+                    address: `mongodb://192.168.1.186:27017/${MONGO_DATABASE}`
                 });
                 break;
         }

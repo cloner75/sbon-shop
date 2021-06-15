@@ -55,8 +55,6 @@ export default (fastify, _opts, done) => {
 
     // fastify.post('/order/payment/pay', Order.pay);
     fastify.post('/order/payment/get/token', Order.pay);
-    fastify.post('/pay/:orderId', Order.update);
-    fastify.get('/pay/:orderId', Order.update);
     fastify.post('/order/verify', Order.verify);
 
     // fastify.post('/order/payment/pay', Order.pay);
