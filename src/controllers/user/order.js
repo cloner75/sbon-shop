@@ -155,19 +155,16 @@ export default class OrderController extends OfferService {
             if (!getOrder) {
                 return reply.status(404).send(Response.generator(404, {}));
             }
-            strongSoap.soap.createClient(
-                "https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL",
-                {},
-                async (_, client) => {
-                    const { result } = await client.ConfirmPayment({
-                        requestData: {
-                            LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
-                            Token: getOrder.token
-                        }
-                    });
-                    Object.assign(result.ConfirmPaymentResult, { RRN: getOrder.RRN });
-                    return reply.send(Response.generator(200, result));
+            strongSoap.soap.createClient("https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL", {}, async (_, client) => {
+                const { result } = await client.ConfirmPayment({
+                    requestData: {
+                        LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
+                        Token: getOrder.token
+                    }
                 });
+                Object.assign(result.ConfirmPaymentResult, { RRN: getOrder.RRN });
+                return reply.send(Response.generator(200, result));
+            });
         } catch (err) {
             return reply.status(500).send(Response.generator(500, err.message));
         }
