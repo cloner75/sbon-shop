@@ -22,23 +22,46 @@ class Connection {
    * @description :: Setting And Router
    */
   async settings() {
-    this.app.register(require('./../routers/product'), { logLevel: 'info', prefix: '/api/v1/product' });
-    this.app.register(require('./../routers/option'), { logLevel: 'info', prefix: '/api/v1/option' });
-    this.app.register(require('./../routers/user'), { logLevel: 'info', prefix: '/api/v1/user' });
-    this.app.register(require('./../routers/telegram'), { logLevel: 'info', prefix: '/api/v1/bot' });
-    this.app.register(require('./../routers/csv'), { logLevel: 'info', prefix: '/api/v1/csv' });
-    this.app.register(require('./../routers/minishop'), { logLevel: 'info', prefix: '/api/v1/minishop' });
-    this.app.register(require('./../routers/pay'), { logLevel: 'info', prefix: '/pay' });
 
     await this.app.register(require('fastify-express'));
-    this.app.use(bodyParser.json()); // support json encoded bodies
-    this.app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
     this.app.use(require('cors')());
     this.app.use(require('dns-prefetch-control')());
     this.app.use(require('frameguard')());
     this.app.use(require('hsts')());
     this.app.use(require('ienoopen')());
     this.app.use(require('x-xss-protection')());
+
+    this.app.register(require('./../routers/product'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/api/v1/product'
+    });
+    this.app.register(require('./../routers/option'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/api/v1/option'
+    });
+    this.app.register(require('./../routers/user'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/api/v1/user'
+    });
+    this.app.register(require('./../routers/telegram'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/api/v1/bot'
+    });
+    this.app.register(require('./../routers/csv'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/api/v1/csv'
+    });
+    this.app.register(require('./../routers/minishop'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/api/v1/minishop'
+    });
+    this.app.register(require('./../routers/pay'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/pay'
+    });
+
+
+
     return this.app;
   }
 
