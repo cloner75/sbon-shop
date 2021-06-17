@@ -14,7 +14,7 @@ const schema = new Schema(
         logs: [{
             action: { type: String, required: true },
             toId: { type: Schema.Types.ObjectId, required: false },
-            createdAt: { type: Date, required: true, default: Date.now() }
+            createdAt: { type: Date, required: false, default: Date.now() }
         }]
     },
     {
