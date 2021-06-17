@@ -17,7 +17,7 @@ import Midd from './../middlewares/user';
 import Hooks from './../helpers/hooks';
 
 // Consts
-const url = '/api/v1/user';
+
 // Routes
 export default (fastify, _opts, done) => {
     // Hooks
