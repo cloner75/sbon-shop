@@ -219,5 +219,25 @@ export default class OrderController extends OfferService {
       return reply.status(500).send(Response.generator(500, err.message));
     }
   }
+
+  /**
+ * @description :: Cancel Order
+ * @param {request} req 
+ * @param {Reply} reply 
+ */
+  async cancelOrder(req, reply) {
+    try {
+      const getOrder = await OrderModel.findOneAndUpdate(
+        { orderId: req.params.orderId },
+        { $set: { status: 3 } },
+        { new: true }
+      );
+      return result ?
+        reply.status(200).send(Response.generator(200, getOrder)) :
+        reply.status(404).send(Response.generator(404));
+    } catch (err) {
+      return reply.status(500).send(Response.generator(500, err.message));
+    }
+  }
 }
 
