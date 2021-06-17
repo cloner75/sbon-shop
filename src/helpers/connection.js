@@ -52,7 +52,7 @@ class Connection {
             MONGO_PASSWORD
         } = process.env;
         let dbConfig = {
-            auth: 'authSource=admin&w=1'
+            auth: ''
         };
         switch (process.env.NODE_ENV) {
             case 'production':
