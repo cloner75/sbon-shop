@@ -1,13 +1,14 @@
 // Packages
 import { hotp } from 'otplib';
 import bcrypt from 'bcrypt';
-import axios from 'axios';
 
 // Models
 import UserModel from './../../models/user/user';
-import JWT from './../../helpers/jsonwebtoken';
+import WalletModel from './../../models/user/wallet';
+
 
 // Helpers
+import JWT from './../../helpers/jsonwebtoken';
 import MongoHelper from './../../helpers/mongo';
 import Response from './../../helpers/response';
 import Logger from './../../helpers/logger';
