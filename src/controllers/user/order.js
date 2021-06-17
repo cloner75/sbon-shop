@@ -88,8 +88,9 @@ export default class OrderController extends OfferService {
         location,
         typePayment,
         sum,
+        sbon: allSbon,
         orderId: Math.floor(Date.now()),
-        payment: sum + 7000
+        payment: sum + 7000,
       });
       return reply.status(201).send(Response.generator(201, createWallet));
     } catch (err) {
@@ -141,7 +142,28 @@ export default class OrderController extends OfferService {
               status: 1,
               RRN: String(result.ConfirmPaymentResult.RRN)
             }
+          });
+          let getWallet = await WalletModel.findOne({ userId: req.user._id });
+          if (!getWallet) {
+            getWallet = await WalletModel.create({
+              userId: req.user._id,
+              amount: 0,
+              logs: [{
+                action: 'اولین خرید'
+              }]
+            });
           }
+          await WalletModel.updateOne(
+            { userId: req.user._id },
+            {
+              $set: { amount: getWallet.amount + getOrder.sbon },
+              $push: {
+                logs: {
+                  action: getOrder.typePayment,
+                }
+              }
+            },
+            { upsert: true }
           );
         } else {
           await OrderModel.updateOne({ orderId }, { $set: { status: 3 } });
@@ -226,10 +248,14 @@ export default class OrderController extends OfferService {
   }
 
   /**
- * @description :: Cancel Order
+  * @description :: Cancel Order
+  * @param {request} req 
  * @param {request} req 
+  * @param {request} req 
+  * @param {Reply} reply 
  * @param {Reply} reply 
- */
+  * @param {Reply} reply 
+  */
   async cancelOrder(req, reply) {
     try {
       const getOrder = await OrderModel.findOneAndUpdate(
