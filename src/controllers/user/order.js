@@ -250,10 +250,6 @@ export default class OrderController extends OfferService {
   /**
   * @description :: Cancel Order
   * @param {request} req 
- * @param {request} req 
-  * @param {request} req 
-  * @param {Reply} reply 
- * @param {Reply} reply 
   * @param {Reply} reply 
   */
   async cancelOrder(req, reply) {
