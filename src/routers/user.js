@@ -52,6 +52,7 @@ export default (fastify, _opts, done) => {
     // Order Routes
     fastify.post('/order/create', Order.create);
     fastify.get('/order/get', Order.find);
+    fastify.put('/order/cancel/:orderId', Order.cancelOrder);
 
     // fastify.post('/order/payment/pay', Order.pay);
     fastify.post('/order/payment/get/token', Order.pay);
