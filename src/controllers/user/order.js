@@ -5,6 +5,7 @@ import strongSoap from 'strong-soap';
 import OrderModel from './../../models/user/order';
 import ProductModel from './../../models/product/product';
 import UserModel from './../../models/user/user';
+import WalletModel from './../../models/user/wallet';
 
 // Helpers
 import MongoHelper from './../../helpers/mongo';
@@ -35,24 +36,28 @@ export default class OrderController extends OfferService {
    */
   async create(req, reply) {
     try {
+      const priceField = req.user.type === 5 ? 'vipPrice' : 'price';
       let sum = 0;
-      Object.assign(req.body, { status: 0, });
+      let allSbon = 0;
+      Object.assign(req.body, { status: 0 });
       const { products, location, typePayment, offerCode } = req.body;
       for (let index in products) {
         let getProduct = await ProductModel.findById({ _id: products[index].productId });
         let findPrice = false;
         if (getProduct) {
           for (let skus of getProduct.skus) {
-            let productSum = 0;
+            let sbon = 0;
             if (String(products[index].skusId) === String(skus._id)) {
-              let calculate = (skus.price * products[index].count) - (((skus.price * products[index].count) * skus.discount) / 100);
+              let calculate = (skus[priceField] * products[index].count) - (((skus[priceField] * products[index].count) * skus.discount) / 100);
+              sbon = skus.sbon * products[index].count;
               sum += calculate;
-              productSum = calculate;
+              allSbon += sbon;
               Object.assign(products[index], {
                 skuId: products[index].skusId,
                 discount: skus.discount,
-                price: skus.price,
-                sum: productSum
+                price: skus[priceField],
+                sum: calculate,
+                sbon
               });
               findPrice = true;
               break;
