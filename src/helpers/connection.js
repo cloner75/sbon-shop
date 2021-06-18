@@ -31,6 +31,12 @@ class Connection {
     this.app.use(require('ienoopen')());
     this.app.use(require('x-xss-protection')());
 
+    this.app.addContentTypeParser('*', (_req, done) => done());
+    this.app.setErrorHandler((error, _request, reply) => {
+        if (error) {
+            reply.send(error);
+        }
+    });
     this.app.register(require('./../routers/product'), {
       logLevel: process.env.LOG_LEVEL,
       prefix: '/api/v1/product'

@@ -259,7 +259,7 @@ export default class OrderController extends OfferService {
         { $set: { status: 3 } },
         { new: true }
       );
-      return result ?
+      return getOrder ?
         reply.status(200).send(Response.generator(200, getOrder)) :
         reply.status(404).send(Response.generator(404));
     } catch (err) {
