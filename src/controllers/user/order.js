@@ -117,6 +117,25 @@ export default class OrderController extends OfferService {
     }
   }
 
+
+
+  /**
+  * @description :: Get One Document
+  * @param {request} req 
+  * @param {Reply} reply 
+  */
+  async findSuperAdmin(req, reply) {
+    try {
+      const { where, options } = MongoHelper.initialMongoQuery(req.query, ORDER);
+      const result = await OrderModel.paginate(where, options);
+
+      return reply.status(200).send(Response.generator(200, result.docs));
+    } catch (err) {
+      return reply.status(500).send(Response.generator(500, err.message));
+    }
+  }
+
+
   /**
    * @description :: update Documents
    * @param {request} req 
