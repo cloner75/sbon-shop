@@ -287,6 +287,11 @@ export default {
     isAuth: true,
     name: 'order-get'
   },
+  '/api/v1/user/order/superadmin/get': {
+    method: 'GET',
+    isAuth: true,
+    name: 'order-superadmin-get'
+  },
   '/api/v1/user/order/create': {
     method: 'POST',
     isAuth: true,
