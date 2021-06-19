@@ -230,6 +230,11 @@ export default {
     isAuth: true,
     name: 'superadmin-profile-update'
   },
+  '/api/v1/user/superadmin/update/bio/:id': {
+    method: 'PUT',
+    isAuth: true,
+    name: 'superadmin-bio-update'
+  },
   '/api/v1/user/superadmin/remove/:id': {
     method: 'DELETE',
     isAuth: true,
