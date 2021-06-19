@@ -439,11 +439,11 @@ export default class UserController {
 
 
   /**
-   * @description :: update Documents
+   * @description :: update Documents By Superadmin
    * @param {request} req 
    * @param {Reply} reply 
    */
-   async updateSuperAadmin(req, reply) {
+  async updateSuperAadmin(req, reply) {
     const start = Date.now();
     try {
       const { password, ...result } = req.body;
@@ -458,6 +458,54 @@ export default class UserController {
       const update = await UserModel.findOneAndUpdate(
         { _id: req.params.id },
         result,
+        {
+          new: true,
+          fields: { password: 0, salt: 0 },
+        }
+      );
+      if (update) {
+        Logger.info({
+          controller: 'User',
+          api: 'update',
+          isSuccess: true,
+          message: '200',
+          time: start - Date.now()
+        });
+        return reply.send(Response.generator(200, update));
+      }
+      Logger.info({
+        controller: 'User',
+        api: 'update',
+        isSuccess: true,
+        message: '404',
+        time: start - Date.now()
+      });
+      return reply.status(404).send(Response.generator(404));
+    } catch (err) {
+      Logger.error({
+        controller: 'User',
+        api: 'update',
+        isSuccess: false,
+        message: err.message,
+        time: start - Date.now()
+      });
+      return reply.status(500).send(Response.generator(500, err.message));
+    }
+  }
+
+  /**
+    * @description :: update Bio
+    * @param {request} req 
+    * @param {Reply} reply 
+    */
+  async updateSuperAadminBio(req, reply) {
+    const start = Date.now();
+    try {
+      const { description, files } = req.body;
+
+      const update = await UserModel.findOneAndUpdate(
+        { _id: req.params.id },
+        { $set: { bio: { description, files } } },
         {
           new: true,
           fields: { password: 0, salt: 0 },
