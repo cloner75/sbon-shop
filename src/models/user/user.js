@@ -51,12 +51,12 @@ const schema = new Schema(
             check: { type: String, required: false },
             turnover: { type: String, required: false },
             nationalCard: { type: String, required: false },
-        }
     },
-    {
-        minimize: false,
-        versionKey: false,
-    },
+    bio: {
+      description: { type: String, required: false },
+      files: { type: Array, required: false },
+    }
+  },
 );
 
 // Add plugins
