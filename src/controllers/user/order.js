@@ -128,8 +128,7 @@ export default class OrderController extends OfferService {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, ORDER);
       const result = await OrderModel.paginate(where, options);
-
-      return reply.status(200).send(Response.generator(200, result.docs));
+      return reply.status(200).send(Response.generator(200, result));
     } catch (err) {
       return reply.status(500).send(Response.generator(500, err.message));
     }
