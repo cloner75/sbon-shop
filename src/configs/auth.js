@@ -230,6 +230,11 @@ export default {
     isAuth: true,
     name: 'superadmin-profile-update'
   },
+  '/api/v1/user/superadmin/user/get/:id': {
+    method: 'GET',
+    isAuth: true,
+    name: 'superadmin-get-one-user'
+  },
   '/api/v1/user/superadmin/update/bio/:id': {
     method: 'PUT',
     isAuth: true,

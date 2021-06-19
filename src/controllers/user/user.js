@@ -540,6 +540,41 @@ export default class UserController {
       return reply.status(500).send(Response.generator(500, err.message));
     }
   }
+
+  /**
+    * @description :: find one user
+    * @param {request} req 
+    * @param {Reply} reply 
+    */
+  async findSuperAadmin(req, reply) {
+    const start = Date.now();
+    try {
+      const { where, options } = MongoHelper.initialMongoQuery(req.query, USER);
+      const result = await UserModel.paginate({
+        ...where,
+        _id: req.params.id
+      }, options);
+      Logger.info({
+        controller: 'User',
+        api: 'findOne',
+        isSuccess: true,
+        message: '200',
+        time: start - Date.now()
+      });
+      return reply.status(200).send(Response.generator(200, result));
+    } catch (err) {
+      Logger.error({
+        controller: 'User',
+        api: 'findOne',
+        isSuccess: false,
+        message: err.message,
+        time: start - Date.now()
+      });
+      return reply.status(500).send(Response.generator(500, err.message));
+    }
+  }
+
+
   /**
    * @description :: update telegram token Documents
    * @param {request} req 

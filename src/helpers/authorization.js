@@ -75,6 +75,7 @@ class Authorization {
       .execute('category-update').on('PUT')
       .execute('category-delete').on('DELETE')
       .execute('order-superadmin-get').on('GET')
+      .execute('superadmin-get-one-user').on('GET')
       .execute('superadmin-profile-update').on('PUT')
       .execute('superadmin-bio-update').on('PUT');
 
