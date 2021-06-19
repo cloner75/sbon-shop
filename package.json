@@ -53,7 +53,7 @@
     "role-acl": "^4.5.4",
     "soap": "^0.36.0",
     "strong-soap": "^3.0.0",
-    "x-xss-protection": "^2.0.0",
+    "x-xss-protection": "^2.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.0",
