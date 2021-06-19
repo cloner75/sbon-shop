@@ -22,7 +22,7 @@ export default (fastify, _opts, done) => {
             type: 'array',
             items: {
               type: 'object',
-              required: ['id', 'skus_id', 'price', 'sbon', 'stock', 'discount', 'vipPrice'],
+              required: ['id', 'skus_id', 'price', 'sbon', 'stock', 'discount', 'major'],
               properties: {
                 id: { type: 'string', pattern: "^[0-9a-fA-F]{24}$" },
                 skus_id: { type: 'string', pattern: "^[0-9a-fA-F]{24}$" },
@@ -30,7 +30,7 @@ export default (fastify, _opts, done) => {
                 sbon: { type: 'integer' },
                 stock: { type: 'integer' },
                 discount: { type: 'integer' },
-                vipPrice: { type: 'integer' },
+                major: { type: 'integer' },
               }
             }
           },
@@ -53,7 +53,7 @@ export default (fastify, _opts, done) => {
                   sbon: { type: 'integer' },
                   stock: { type: 'integer' },
                   discount: { type: 'integer' },
-                  vipPrice: { type: 'integer' },
+                  major: { type: 'integer' },
                 }
               }
             },

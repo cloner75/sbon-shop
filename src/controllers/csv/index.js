@@ -148,7 +148,7 @@ export default class CsvController {
               'skus.$.sbon': +item.sbon,
               'skus.$.stock': +item.stock,
               'skus.$.discount': +item.discount,
-              'skus.$.vipPrice': +item.vipPrice
+              'skus.$.major': +item.major
             }
           }
         );

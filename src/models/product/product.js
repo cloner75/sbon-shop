@@ -38,7 +38,7 @@ const schema = new Schema(
                 default: { type: Boolean, required: false, default: false },
                 image: { type: String, required: false },
                 price: { type: Number, required: false },
-                vipPrice: { type: Number, required: false },
+                major: { type: Number, required: false },
                 discount: { type: Number, required: false },
                 sbon: { type: Number, required: false },
                 stock: { type: Number, required: false },

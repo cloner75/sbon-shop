@@ -36,7 +36,7 @@ export default class OrderController extends OfferService {
    */
   async create(req, reply) {
     try {
-      const priceField = req.user.type === 5 ? 'vipPrice' : 'price';
+      const priceField = req.user.type === 5 ? 'major' : 'price';
       let sum = 0;
       let allSbon = 0;
       Object.assign(req.body, { status: 0 });
