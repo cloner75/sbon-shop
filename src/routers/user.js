@@ -38,7 +38,7 @@ export default (fastify, _opts, done) => {
   fastify.put('/profile/location', User.updateLocation);
   fastify.put('/profile/telegram', Midd.updateTelegramToken, User.updateTelegramToken);
   fastify.put('/profile/:id', Midd.update, User.update);
-  fastify.put('/superadmin/update/:id', Midd.update, User.update);
+  fastify.put('/superadmin/update/:id', Midd.update, User.updateSuperAadmin);
 
   fastify.delete('/superadmin/remove/:id', Midd.delete, User.remove);
 
