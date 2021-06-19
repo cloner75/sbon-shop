@@ -28,41 +28,41 @@ export default (fastify, _opts, done) => {
     
     // Product
     fastify.get('/get', middle.pro.find, Product.find);
-    fastify.get('/search', middle.pro.search, Product.search);
-    fastify.get('/get/:id', middle.pro.findOne, Product.findOne);
     fastify.post('/create', middle.pro.create, Product.create);
+    // fastify.get('/search', middle.pro.search, Product.search);
+    fastify.get('/get/:id', middle.pro.findOne, Product.findOne);
     fastify.put('/update/:id', middle.pro.update, Product.update);
     fastify.delete('/remove/:id', middle.pro.delete, Product.remove);
 
-    // Comment
-    fastify.get('/comment/get', middle.com.find, Comment.find);
-    fastify.get('/comment/get/public', middle.com.find, Comment.findPublic);
-    fastify.post('/comment/create', middle.com.create, Comment.create);
-    fastify.get('/comment/get/:id', middle.com.findOne, Comment.findOne);
-    fastify.put('/comment/update/:id', middle.com.update, Comment.update);
-    fastify.delete('/comment/remove/:id', middle.com.delete, Comment.remove);
+    // // Comment
+    // fastify.get('/comment/get', middle.com.find, Comment.find);
+    // fastify.get('/comment/get/public', middle.com.find, Comment.findPublic);
+    // fastify.post('/comment/create', middle.com.create, Comment.create);
+    // fastify.get('/comment/get/:id', middle.com.findOne, Comment.findOne);
+    // fastify.put('/comment/update/:id', middle.com.update, Comment.update);
+    // fastify.delete('/comment/remove/:id', middle.com.delete, Comment.remove);
 
-    // Category
-    fastify.get('/category/get', middle.cat.find, Category.find);
-    fastify.post('/category/create', middle.cat.create, Category.create);
-    fastify.get('/category/get/:id', middle.cat.findOne, Category.findOne);
-    fastify.put('/category/update/:id', middle.cat.update, Category.update);
-    fastify.delete('/category/remove/:id', middle.cat.delete, Category.remove);
+    // // Category
+    // fastify.get('/category/get', middle.cat.find, Category.find);
+    // fastify.post('/category/create', middle.cat.create, Category.create);
+    // fastify.get('/category/get/:id', middle.cat.findOne, Category.findOne);
+    // fastify.put('/category/update/:id', middle.cat.update, Category.update);
+    // fastify.delete('/category/remove/:id', middle.cat.delete, Category.remove);
 
 
-    // Brand
-    fastify.get('/brand/get', middle.brand.find, Brand.find);
-    fastify.post('/brand/create', middle.brand.create, Brand.create);
-    fastify.get('/brand/get/:id', middle.brand.findOne, Brand.findOne);
-    fastify.put('/brand/update/:id', middle.brand.update, Brand.update);
-    fastify.delete('/brand/remove/:id', middle.brand.delete, Brand.remove);
+    // // Brand
+    // fastify.get('/brand/get', middle.brand.find, Brand.find);
+    // fastify.post('/brand/create', middle.brand.create, Brand.create);
+    // fastify.get('/brand/get/:id', middle.brand.findOne, Brand.findOne);
+    // fastify.put('/brand/update/:id', middle.brand.update, Brand.update);
+    // fastify.delete('/brand/remove/:id', middle.brand.delete, Brand.remove);
 
-    // Offer
-    fastify.get('/offer/get', middle.offer.find, Offer.find);
-    fastify.post('/offer/create', middle.offer.create, Offer.create);
-    fastify.get('/offer/get/one/:id', middle.offer.findOneDashboard, Offer.findOneDashboard);
-    fastify.get('/offer/get/:code', middle.offer.findOne, Offer.findOne);
-    fastify.put('/offer/update/:id', middle.offer.update, Offer.update);
+    // // Offer
+    // fastify.get('/offer/get', middle.offer.find, Offer.find);
+    // fastify.post('/offer/create', middle.offer.create, Offer.create);
+    // fastify.get('/offer/get/one/:id', middle.offer.findOneDashboard, Offer.findOneDashboard);
+    // fastify.get('/offer/get/:code', middle.offer.findOne, Offer.findOne);
+    // fastify.put('/offer/update/:id', middle.offer.update, Offer.update);
 
     done();
 };
