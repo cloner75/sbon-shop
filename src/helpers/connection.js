@@ -1,10 +1,11 @@
 // Packages
 import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
 
 // Helpers
 import CronJobs from './cronjob';
 
+// Confis
+import SwaggerConfig from './../configs/swagger';
 /**
  * @description :: Class For Connection Service
  */
@@ -33,39 +34,39 @@ class Connection {
 
     this.app.addContentTypeParser('*', (_req, done) => done());
     this.app.setErrorHandler((error, _request, reply) => {
-        if (error) {
-            reply.send(error);
-        }
+      if (error) {
+        reply.send(error);
+      }
     });
+    this.app.register(require('fastify-swagger'), SwaggerConfig.options);
     this.app.register(require('./../routers/product'), {
       logLevel: process.env.LOG_LEVEL,
       prefix: '/api/v1/product'
     });
-    this.app.register(require('./../routers/option'), {
-      logLevel: process.env.LOG_LEVEL,
-      prefix: '/api/v1/option'
-    });
-    this.app.register(require('./../routers/user'), {
-      logLevel: process.env.LOG_LEVEL,
-      prefix: '/api/v1/user'
-    });
-    this.app.register(require('./../routers/telegram'), {
-      logLevel: process.env.LOG_LEVEL,
-      prefix: '/api/v1/bot'
-    });
+    // this.app.register(require('./../routers/option'), {
+    //   logLevel: process.env.LOG_LEVEL,
+    //   prefix: '/api/v1/option'
+    // });
+    // this.app.register(require('./../routers/user'), {
+    //   logLevel: process.env.LOG_LEVEL,
+    //   prefix: '/api/v1/user'
+    // });
+    // this.app.register(require('./../routers/telegram'), {
+    //   logLevel: process.env.LOG_LEVEL,
+    //   prefix: '/api/v1/bot'
+    // });
     this.app.register(require('./../routers/csv'), {
       logLevel: process.env.LOG_LEVEL,
       prefix: '/api/v1/csv'
     });
-    this.app.register(require('./../routers/minishop'), {
-      logLevel: process.env.LOG_LEVEL,
-      prefix: '/api/v1/minishop'
-    });
-    this.app.register(require('./../routers/pay'), {
-      logLevel: process.env.LOG_LEVEL,
-      prefix: '/pay'
-    });
-
+    // this.app.register(require('./../routers/minishop'), {
+    //   logLevel: process.env.LOG_LEVEL,
+    //   prefix: '/api/v1/minishop'
+    // });
+    // this.app.register(require('./../routers/pay'), {
+    //   logLevel: process.env.LOG_LEVEL,
+    //   prefix: '/pay'
+    // });
 
 
     return this.app;
@@ -133,6 +134,7 @@ class Connection {
           console.log(`🚀 Server ready at ${address}`);
           this.database();
           new CronJobs();
+          this.app.swagger();
         });
       });
   }
