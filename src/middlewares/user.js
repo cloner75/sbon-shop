@@ -107,7 +107,7 @@ export default {
             .valid('createdAt', 'updatedAt'),
           order: joi.string().trim().valid('asc', 'desc'),
           fields: joi.string().trim(),
-        })
+        }).unknown()
     },
     validatorCompiler: ({ schema }) => {
       return (data) => schema.validate(data);
