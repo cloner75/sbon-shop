@@ -561,7 +561,7 @@ export default class UserController {
         message: '200',
         time: start - Date.now()
       });
-      return reply.status(200).send(Response.generator(200, result));
+      return reply.status(200).send(Response.generator(200, result.docs[0]));
     } catch (err) {
       Logger.error({
         controller: 'User',
