@@ -314,7 +314,8 @@ export default {
       'avatar',
       'nationalCode',
       'locations',
-      'telegram'
+      'telegram',
+      'bio'
     ],
     wallet: [
       'amount',
