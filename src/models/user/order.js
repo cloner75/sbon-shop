@@ -48,7 +48,8 @@ const schema = new Schema(
     payment: { type: Number, rqeuired: true },
     orderId: { type: String, required: true },
     status: { type: Number, required: true, default: 0 },
-    sbon: { type: Number, required: true, default: 0 }
+    sbon: { type: Number, required: true, default: 0 },
+    isMajor: { type: Boolean, required: false, default: false }
   },
   {
     minimize: false,
