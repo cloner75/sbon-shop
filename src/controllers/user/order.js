@@ -89,9 +89,11 @@ export default class OrderController extends OfferService {
    * @param {Reply} reply 
    */
   async update(req, reply) {
+    console.log('update order =>');
     try {
       const orderId = req.params.orderId;
       const getOrder = await OrderModel.findOne({ orderId });
+      console.log('update getOrder => ', getOrder);
       if (!getOrder) {
         return reply.redirect(301, `/payment/verify/${orderId}`);
       }
@@ -102,6 +104,7 @@ export default class OrderController extends OfferService {
             Token: getOrder.token
           }
         });
+        console.log('after confirm payment result => ', result);
         if (result.ConfirmPaymentResult.Status == 0 && result.ConfirmPaymentResult.RRN) {
           await OrderModel.updateOne({ orderId }, {
             $set: {
@@ -110,6 +113,7 @@ export default class OrderController extends OfferService {
             }
           });
           let getWallet = await WalletModel.findOne({ userId: req.user._id });
+          console.log('get wallet =>', getWallet);
           if (!getWallet) {
             getWallet = await WalletModel.create({
               userId: req.user._id,
@@ -137,6 +141,7 @@ export default class OrderController extends OfferService {
         return reply.redirect(301, `/payment/verify/${orderId}`);
       });
     } catch (err) {
+      console.log('update err =>', err);
       return reply.status(500).send(Response.generator(500, err.message));
     }
   }
