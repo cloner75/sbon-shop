@@ -141,7 +141,7 @@ export default class OrderController extends OfferService {
         return reply.redirect(301, `/payment/verify/${orderId}`);
       });
     } catch (err) {
-      console.log('update err =>',err)
+      console.log('update err =>', err);
       return reply.status(500).send(Response.generator(500, err.message));
     }
   }
@@ -159,6 +159,10 @@ export default class OrderController extends OfferService {
       if (!getOrder) {
         return reply.status(404).send(Response.generator(404, {}));
       }
+      console.log({
+        LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
+        Token: getOrder.token
+      });
       strongSoap.soap.createClient("https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL", {}, async (_, client) => {
         const { result } = await client.ConfirmPayment({
           requestData: {
@@ -172,6 +176,7 @@ export default class OrderController extends OfferService {
             orderStatus: getOrder.status
           }
         );
+        console.log({ result });
         return reply.send(Response.generator(200, result));
       });
     } catch (err) {
