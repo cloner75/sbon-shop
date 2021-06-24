@@ -195,6 +195,7 @@ export default class OrderController extends OfferService {
             CallBackUrl: `https://sbon.ir/pay/${getOrder.orderId}`
           }
         });
+        console.log('get result create client soap => ', result);
         if (result.SalePaymentRequestResult.Token === 0) {
           return reply.send(Response.generator(400, {
             status: result.SalePaymentRequestResult.Status,
@@ -202,6 +203,10 @@ export default class OrderController extends OfferService {
           }));
         } else {
           await OrderModel.updateOne({ _id: req.body._id }, { $set: { token: result.SalePaymentRequestResult.Token } });
+          console.log('show result after update =>', {
+            token: result.SalePaymentRequestResult.Token,
+            address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
+          });
           return reply.send(Response.generator(200, {
             token: result.SalePaymentRequestResult.Token,
             address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
