@@ -89,9 +89,11 @@ export default class OrderController extends OfferService {
    * @param {Reply} reply 
    */
   async update(req, reply) {
+    console.log('update order =>');
     try {
       const orderId = req.params.orderId;
       const getOrder = await OrderModel.findOne({ orderId });
+      console.log('update getOrder => ', getOrder);
       if (!getOrder) {
         return reply.redirect(301, `/payment/verify/${orderId}`);
       }
@@ -102,6 +104,7 @@ export default class OrderController extends OfferService {
             Token: getOrder.token
           }
         });
+        console.log('after confirm payment result => ', result);
         if (result.ConfirmPaymentResult.Status == 0 && result.ConfirmPaymentResult.RRN) {
           await OrderModel.updateOne({ orderId }, {
             $set: {
@@ -109,10 +112,11 @@ export default class OrderController extends OfferService {
               RRN: String(result.ConfirmPaymentResult.RRN)
             }
           });
-          let getWallet = await WalletModel.findOne({ userId: getOrder._id });
+          let getWallet = await WalletModel.findOne({ userId: req.user._id });
+          console.log('get wallet =>', getWallet);
           if (!getWallet) {
             getWallet = await WalletModel.create({
-              userId: getOrder._id,
+              userId: req.user._id,
               amount: 0,
               logs: [{
                 action: 'اولین خرید'
@@ -120,7 +124,7 @@ export default class OrderController extends OfferService {
             });
           }
           await WalletModel.updateOne(
-            { userId: getOrder._id },
+            { userId: req.user._id },
             {
               $set: { amount: getWallet.amount + getOrder.sbon },
               $push: {
@@ -137,7 +141,7 @@ export default class OrderController extends OfferService {
         return reply.redirect(301, `/payment/verify/${orderId}`);
       });
     } catch (err) {
-      console.log(err);
+      console.log('update err =>',err)
       return reply.status(500).send(Response.generator(500, err.message));
     }
   }
@@ -196,6 +200,7 @@ export default class OrderController extends OfferService {
             CallBackUrl: `https://sbon.ir/pay/${getOrder.orderId}`
           }
         });
+        console.log('get result create client soap => ', result);
         if (result.SalePaymentRequestResult.Token === 0) {
           return reply.send(Response.generator(400, {
             status: result.SalePaymentRequestResult.Status,
@@ -203,6 +208,10 @@ export default class OrderController extends OfferService {
           }));
         } else {
           await OrderModel.updateOne({ _id: req.body._id }, { $set: { token: result.SalePaymentRequestResult.Token } });
+          console.log('show result after update =>', {
+            token: result.SalePaymentRequestResult.Token,
+            address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
+          });
           return reply.send(Response.generator(200, {
             token: result.SalePaymentRequestResult.Token,
             address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
