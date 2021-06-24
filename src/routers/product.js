@@ -29,7 +29,7 @@ export default (fastify, _opts, done) => {
     // Product
     fastify.get('/get', middle.pro.find, Product.find);
     fastify.post('/create', middle.pro.create, Product.create);
-    // fastify.get('/search', middle.pro.search, Product.search);
+    fastify.get('/search', middle.pro.search, Product.search);
     fastify.get('/get/:id', middle.pro.findOne, Product.findOne);
     fastify.put('/update/:id', middle.pro.update, Product.update);
     fastify.delete('/remove/:id', middle.pro.delete, Product.remove);
