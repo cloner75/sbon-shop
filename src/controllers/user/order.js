@@ -13,6 +13,7 @@ import Response from './../../helpers/response';
 
 // Services
 import OfferService from './../../services/product/offer';
+import OrderService from './../../services/user/order';
 
 // Consts
 const ORDER = 'order';
