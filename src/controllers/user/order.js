@@ -36,63 +36,10 @@ export default class OrderController extends OfferService {
    */
   async create(req, reply) {
     try {
-      const priceField = req.user.type === 5 ? 'major' : 'price';
-      let sum = 0;
-      let allSbon = 0;
-      Object.assign(req.body, { status: 0 });
-      const { products, location, typePayment, offerCode } = req.body;
-      for (let index in products) {
-        let getProduct = await ProductModel.findById({ _id: products[index].productId });
-        let findPrice = false;
-        if (getProduct) {
-          for (let skus of getProduct.skus) {
-            let sbon = 0;
-            if (String(products[index].skusId) === String(skus._id)) {
-              let calculate = (skus[priceField] * products[index].count) - (((skus[priceField] * products[index].count) * skus.discount) / 100);
-              sbon = skus.sbon * products[index].count;
-              sum += calculate;
-              allSbon += sbon;
-              Object.assign(products[index], {
-                skuId: products[index].skusId,
-                discount: skus.discount,
-                price: skus[priceField],
-                sum: calculate,
-                sbon
-              });
-              findPrice = true;
-              break;
-            }
-          }
-        }
-        if (!findPrice) {
-          return reply.status(404).send(Response.generator(404));
-        }
-      }
-      if (offerCode) {
-        const { status, result } = await super.findOne(offerCode);
-        if (status === 200) {
-          let getUser = await UserModel.findById(req.user._id);
-          if (!getUser) {
-            return reply.status(404).send(Response.generator(404));
-          }
-          if (!getUser.offerCodes || !getUser.offerCodes.includes(offerCode)) {
-            sum -= result.amount;
-            await UserModel.updateOne({ _id: req.user._id }, { $push: { offerCodes: offerCode } });
-          }
-        }
-      }
-      const createWallet = await OrderModel.create({
-        userId: req.user._id,
-        products,
-        postPrice: 7000,
-        location,
-        typePayment,
-        sum,
-        sbon: allSbon,
-        orderId: Math.floor(Date.now()),
-        payment: sum + 7000,
-      });
-      return reply.status(201).send(Response.generator(201, createWallet));
+      const result = req.user.type === 5 ?
+        await OrderService.majorOrderCreate(req) :
+        await OrderService.singleOrderCreate(req);
+      return reply.status(result.status).send(result.response);
     } catch (err) {
       return reply.status(500).send(Response.generator(500, err.message));
     }
