@@ -137,6 +137,7 @@ export default class OrderController extends OfferService {
         return reply.redirect(301, `/payment/verify/${orderId}`);
       });
     } catch (err) {
+      console.log(err);
       return reply.status(500).send(Response.generator(500, err.message));
     }
   }
