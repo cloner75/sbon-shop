@@ -15,8 +15,6 @@ export default class OfferService {
   /**
    * @description :: Get One Document
    * @param {string} code 
-     * @param {string} code 
-   * @param {string} code 
    */
   static async findOne(code) {
     const result = await offerModel.findOne({ code });
