@@ -77,7 +77,7 @@ export default class OrderService {
       orderId: Math.floor(Date.now()),
       payment: sum + 7000,
     });
-    return { status: 200, response: createOrder };
+    return { status: 200, response: Response.generator(200, createOrder) };
   }
 
   /**
@@ -89,7 +89,7 @@ export default class OrderService {
     let sum = 0;
     let allSbon = 0;
     Object.assign(req.body, { status: 0 });
-    const { products, location, typePayment, offerCode } = req.body;
+    const { products, location, typePayment } = req.body;
     for (let index in products) {
       let getProduct = await ProductModel.findById({ _id: products[index].productId });
       let findPrice = false;
@@ -140,7 +140,7 @@ export default class OrderService {
       payment: sum + 7000,
       isMajor: true
     });
-    return { status: 200, response: createOrder };
+    return { status: 200, response: Response.generator(200, createOrder) };
 
 
   }
