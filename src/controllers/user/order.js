@@ -112,11 +112,11 @@ export default class OrderController extends OfferService {
               RRN: String(result.ConfirmPaymentResult.RRN)
             }
           });
-          let getWallet = await WalletModel.findOne({ userId: req.user._id });
+          let getWallet = await WalletModel.findOne({ userId: getOrder.userId });
           console.log('get wallet =>', getWallet);
           if (!getWallet) {
             getWallet = await WalletModel.create({
-              userId: req.user._id,
+              userId: getOrder.userId,
               amount: 0,
               logs: [{
                 action: 'اولین خرید'
@@ -124,7 +124,7 @@ export default class OrderController extends OfferService {
             });
           }
           await WalletModel.updateOne(
-            { userId: req.user._id },
+            { userId: getOrder.userId },
             {
               $set: { amount: getWallet.amount + getOrder.sbon },
               $push: {
