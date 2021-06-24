@@ -14,97 +14,101 @@ const messages = {
   'string.min': configs.errors[11],
   'string.max': configs.errors[12],
 };
-const PRODUCT_BODY = {
-  type: 'object',
-  required: ['titleFa', 'titleEn', 'brandId', 'categoriesId', 'body', 'slug', 'images', 'attributes', 'skus'],
-  properties: {
-    titleFa: { type: 'string' },
-    titleEn: { type: 'string' },
-    brandId: { type: 'string', pattern: '/^[0-9a-fA-F]{24}$/' },
-    categoriesId: {
-      type: 'array',
-      items: {
-        type: 'string',
-        pattern: '/^[0-9a-fA-F]{24}$/'
-      }
-    },
-    keyWords: {
-      type: 'array',
-      items: { type: 'string' }
-    },
-    body: { type: 'string' },
-    slug: { type: 'string' },
-    images: {
-      type: 'array',
-      items: { type: 'string' }
-    },
-    attributes: {
-      type: 'object',
-      required: ['name', 'items'],
-      properties: {
-        name: { type: 'string' },
+
+const DEFAULTS_PRODUCTS = {
+  DEFAULTS_PRODUCTS: {
+    type: 'object',
+    required: ['titleFa', 'titleEn', 'brandId', 'categoriesId', 'body', 'slug', 'images', 'attributes', 'skus'],
+    properties: {
+      titleFa: { type: 'string' },
+      titleEn: { type: 'string' },
+      brandId: { type: 'string', pattern: '/^[0-9a-fA-F]{24}$/' },
+      categoriesId: {
+        type: 'array',
         items: {
-          type: 'array',
-          items: {
-            type: 'object',
-            required: ['value', 'key'],
-            properties: {
-              default: { type: 'boolean' },
-              value: { type: 'string' },
-              key: { type: 'string' },
-
-            }
-          }
+          type: 'string',
+          pattern: '/^[0-9a-fA-F]{24}$/'
         }
-      }
-    },
-
-    skus: {
-      type: 'array',
-      items: {
+      },
+      keyWords: {
+        type: 'array',
+        items: { type: 'string' }
+      },
+      body: { type: 'string' },
+      slug: { type: 'string' },
+      images: {
+        type: 'array',
+        items: { type: 'string' }
+      },
+      attributes: {
         type: 'object',
-        required: ['image', 'key', 'name', 'price', 'discount', 'sbon', 'stock'],
+        required: ['name', 'items'],
         properties: {
-          default: { type: 'boolean' },
-          image: { type: 'string' },
-          key: { type: 'string' },
           name: { type: 'string' },
-          price: { type: 'number' },
-          vipPrice: { type: 'number' },
-          discount: { type: 'number' },
-          sbon: { type: 'number' },
-          stock: { type: 'number' },
-          options: {
+          items: {
             type: 'array',
-            required: ['key', 'value'],
             items: {
               type: 'object',
+              required: ['value', 'key'],
               properties: {
-                key: { type: 'string' },
+                default: { type: 'boolean' },
                 value: { type: 'string' },
+                key: { type: 'string' },
+
               }
             }
           }
         }
-      }
-    },
+      },
 
-    description: { type: 'boolean' },
-    isShow: { type: 'boolean' },
-    type: { type: 'number' },
-    status: { type: 'number' },
-  }
-};
-const PRODUCT_QUERY = {
-  type: 'object',
-  properties: {}
-};
-const PRODUCT_PARAM = {
-  type: 'object',
-  required: ['id'],
-  properties: {
-    id: { type: 'string', pattern: "/^[0-9a-fA-F]{24}$/" },
-  }
+      skus: {
+        type: 'array',
+        items: {
+          type: 'object',
+          required: ['image', 'key', 'name', 'price', 'discount', 'sbon', 'stock'],
+          properties: {
+            default: { type: 'boolean' },
+            image: { type: 'string' },
+            key: { type: 'string' },
+            name: { type: 'string' },
+            price: { type: 'number' },
+            vipPrice: { type: 'number' },
+            discount: { type: 'number' },
+            sbon: { type: 'number' },
+            stock: { type: 'number' },
+            options: {
+              type: 'array',
+              required: ['key', 'value'],
+              items: {
+                type: 'object',
+                properties: {
+                  key: { type: 'string' },
+                  value: { type: 'string' },
+                }
+              }
+            }
+          }
+        }
+      },
+
+      description: { type: 'boolean' },
+      isShow: { type: 'boolean' },
+      type: { type: 'number' },
+      status: { type: 'number' },
+    }
+  },
+  PRODUCT_QUERY: {
+    type: 'object',
+    properties: {}
+  },
+  PRODUCT_PARAM: {
+    type: 'object',
+    required: ['id'],
+    properties: {
+      id: { type: 'string', pattern: "/^[0-9a-fA-F]{24}$/" },
+    }
+  },
+  PRODUCT_TAGS: ['product-service'],
 };
 
 // Export Schemas
@@ -118,9 +122,9 @@ export default {
     create: {
       schema: {
         description: 'Create New Products',
-        tags: ['product-service'],
+        tags: DEFAULTS_PRODUCTS.PRODUCT_TAGS,
         summary: 'create products collection',
-        body: PRODUCT_BODY
+        body: DEFAULTS_PRODUCTS.PRODUCT_BODY
       }
     },
 
@@ -128,26 +132,31 @@ export default {
     update: {
       schema: {
         description: 'Update One Products',
-        tags: ['product-service'],
+        tags: DEFAULTS_PRODUCTS.PRODUCT_TAGS,
         summary: 'Update product collection',
-        params: PRODUCT_PARAM,
-        body: PRODUCT_BODY,
+        params: DEFAULTS_PRODUCTS.PRODUCT_PARAM,
+        body: DEFAULTS_PRODUCTS.PRODUCT_BODY,
       }
     },
 
     // @description :: Schema Search
     search: {
       schema: {
-        querystring: joi
-          .object({
-            type: joi.number().valid(1, 2),
-            title: joi.string().trim(),
-            brandId: joi.string().trim(),
-            categoriesId: joi.string().trim(),
-            priceMin: joi.number(),
-            priceMax: joi.number()
-          })
-          .unknown(),
+        description: 'Update One Products',
+        tags: DEFAULTS_PRODUCTS.PRODUCT_TAGS,
+        summary: 'Search product collection',
+        querystring: {
+          type: 'object',
+          required: ['type', 'title', 'brandId', 'categoriesId', 'priceMin', 'priceMax'],
+          properties: {
+            type: { type: 'number', minimum: 1, maximum: 2 },
+            title: { type: 'string' },
+            brandId: { type: 'string' },
+            categoriesId: { type: 'string' },
+            priceMin: { type: 'number' },
+            priceMax: { type: 'number' },
+          }
+        }
       },
       validatorCompiler: ({ schema }) => {
         return (data) => schema.validate(data);
@@ -158,9 +167,9 @@ export default {
     find: {
       schema: {
         description: 'Find Products',
-        tags: ['product-service'],
+        tags: DEFAULTS_PRODUCTS.PRODUCT_TAGS,
         summary: 'Find product collection',
-        querystring: PRODUCT_QUERY
+        querystring: DEFAULTS_PRODUCTS.PRODUCT_QUERY
       },
     },
 
@@ -168,10 +177,10 @@ export default {
     findOne: {
       schema: {
         description: 'Find One Product',
-        tags: ['product-service'],
+        tags: DEFAULTS_PRODUCTS.PRODUCT_TAGS,
         summary: 'Find One Product collection',
-        params: PRODUCT_PARAM,
-        querystring: PRODUCT_QUERY,
+        params: DEFAULTS_PRODUCTS.PRODUCT_PARAM,
+        querystring: DEFAULTS_PRODUCTS.PRODUCT_QUERY,
       }
     },
 
@@ -179,9 +188,9 @@ export default {
     delete: {
       schema: {
         description: 'Delete One Product',
-        tags: ['product-service'],
+        tags: DEFAULTS_PRODUCTS.PRODUCT_TAGS,
         summary: 'Delete One  product collection',
-        params: PRODUCT_PARAM
+        params: DEFAULTS_PRODUCTS.PRODUCT_PARAM
       },
     },
   },
