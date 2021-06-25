@@ -82,7 +82,7 @@ export default class OrderController extends OfferService {
   async findSuperAdmin(req, reply) {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, ORDER);
-      const result = await OrderModel.paginate(where, options);
+      const result = await OrderModel.paginate({ ...where, status: 1 }, options);
       return reply.status(200).send(Response.generator(200, result));
     } catch (err) {
       return reply.status(500).send(Response.generator(500, err.message));
@@ -112,6 +112,7 @@ export default class OrderController extends OfferService {
           }
         });
         console.log('after confirm payment result => ', result);
+
         if (result.ConfirmPaymentResult.Status == 0 && result.ConfirmPaymentResult.RRN) {
           await OrderModel.updateOne({ orderId }, {
             $set: {
@@ -142,7 +143,7 @@ export default class OrderController extends OfferService {
             },
             { upsert: true }
           );
-        } else {
+        } else if(result.ConfirmPaymentResult.Status !== -1533) {
           await OrderModel.updateOne({ orderId }, { $set: { status: 3 } });
         }
         return reply.redirect(301, `/payment/verify/${orderId}`);
