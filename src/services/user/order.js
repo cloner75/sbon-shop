@@ -7,6 +7,7 @@ import OfferService from './../../services/product/offer';
 // Helpers
 import Response from './../../helpers/response';
 
+
 /**
  * @description :: The Controller service
  *
@@ -15,6 +16,16 @@ import Response from './../../helpers/response';
  * var Ctrl = new Controller();
  */
 export default class OrderService {
+
+  /**
+   * @description :: convert toman to rial
+   * @param {number} price 
+   * @returns rial
+   */
+  toRial(price) {
+    return price * 10;
+  }
+
   /**
    * @description :: Get One Document
    * @param {string} code 
@@ -69,13 +80,13 @@ export default class OrderService {
     const createOrder = await OrderModel.create({
       userId: req.user._id,
       products,
-      postPrice: 7000,
+      postPrice: Number(process.env.POST_PRICE),
       location,
       typePayment,
       sum,
       sbon: allSbon,
       orderId: Math.floor(Date.now()),
-      payment: sum + 7000,
+      payment: this.toRial(sum + Number(process.env.POST_PRICE)),
     });
     return { status: 200, response: Response.generator(200, createOrder) };
   }
@@ -131,13 +142,13 @@ export default class OrderService {
     const createOrder = await OrderModel.create({
       userId: req.user._id,
       products,
-      postPrice: 7000,
+      postPrice: Number(process.env.POST_PRICE),
       location,
       typePayment,
       sum,
       sbon: allSbon,
       orderId: Math.floor(Date.now()),
-      payment: sum + 7000,
+      payment: this.toRial(sum + Number(process.env.POST_PRICE)),
       isMajor: true
     });
     return { status: 200, response: Response.generator(200, createOrder) };
