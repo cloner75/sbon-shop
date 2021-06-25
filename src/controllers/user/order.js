@@ -19,6 +19,13 @@ import OrderService from './../../services/user/order';
 const ORDER = 'order';
 
 /**
+ * @description :: convert toman to rial
+ * @param {number} price 
+ * @returns rial
+ */
+const toRial = price => price * 10;
+
+/**
  * @description :: The Controller service
  *
  * @class Controller
@@ -200,7 +207,7 @@ export default class OrderController extends OfferService {
         const { result } = await client.SalePaymentRequest({
           requestData: {
             LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
-            Amount: getOrder.payment,
+            Amount: toRial(getOrder.payment),
             OrderId: getOrder.orderId,
             CallBackUrl: `https://sbon.ir/pay/${getOrder.orderId}`
           }

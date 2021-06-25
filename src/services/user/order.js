@@ -9,13 +9,6 @@ import Response from './../../helpers/response';
 
 
 /**
- * @description :: convert toman to rial
- * @param {number} price 
- * @returns rial
- */
-const toRial = price => price * 10;
-
-/**
  * @description :: The Controller service
  *
  * @class Controller
@@ -84,7 +77,7 @@ export default class OrderService {
       sum,
       sbon: allSbon,
       orderId: Math.floor(Date.now()),
-      payment: toRial(sum + Number(process.env.POST_PRICE)),
+      payment: sum + Number(process.env.POST_PRICE),
     });
     return { status: 200, response: Response.generator(200, createOrder) };
   }
@@ -146,7 +139,7 @@ export default class OrderService {
       sum,
       sbon: allSbon,
       orderId: Math.floor(Date.now()),
-      payment: toRial(sum + Number(process.env.POST_PRICE)),
+      payment: sum + Number(process.env.POST_PRICE),
       isMajor: true
     });
     return { status: 200, response: Response.generator(200, createOrder) };
