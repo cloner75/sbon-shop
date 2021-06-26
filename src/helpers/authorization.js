@@ -33,6 +33,7 @@ class Authorization {
       .execute('order-create').on('POST')
       .execute('order-get').on('GET')
       .execute('offer-get-one').on('GET')
+      .execute('wallet-get').on('GET')
       .execute('order-cancel').on('PUT');
 
     AC.grant('wholesale')
@@ -41,7 +42,6 @@ class Authorization {
     AC.grant('affiliate')
       .extend('user')
       .execute('comment-update').on('PUT')
-      .execute('wallet-get').on('GET')
       .execute('wallet-create').on('POST')
       .execute('wallet-update').on('PUT');
 
