@@ -49,7 +49,7 @@ export default class UserController {
             api: 'hotpSend',
             isSuccess: true,
             message: '409',
-            time: start - Date.now()
+            time: Date.now() - start
           });
           return reply.status(409).send(Response.generator(409));
         } else {
@@ -58,7 +58,7 @@ export default class UserController {
             api: 'hotpSend',
             isSuccess: true,
             message: '201',
-            time: start - Date.now()
+            time: Date.now() - start
           });
           const secret = phone + Date.now();
           const token = hotp.generate(process.env.HOTP_SECRET, secret);
@@ -75,7 +75,7 @@ export default class UserController {
           api: 'hotpSend',
           isSuccess: true,
           message: '201',
-          time: start - Date.now()
+          time: Date.now() - start
         });
         const secret = phone + Date.now();
         const token = hotp.generate(process.env.HOTP_SECRET, secret);
@@ -91,7 +91,7 @@ export default class UserController {
         api: 'hotpSend',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -121,7 +121,7 @@ export default class UserController {
           api: 'hotpVerify',
           isSuccess: true,
           message: '202',
-          time: start - Date.now()
+          time: Date.now() - start
         });
         return reply.status(202).send(Response.generator(202));
       }
@@ -131,7 +131,7 @@ export default class UserController {
         api: 'hotpVerify',
         isSuccess: true,
         message: '400',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(400).send(Response.generator(400));
     } catch (err) {
@@ -140,7 +140,7 @@ export default class UserController {
         api: 'hotpVerify',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -170,7 +170,7 @@ export default class UserController {
           api: 'register',
           isSuccess: true,
           message: '200',
-          time: start - Date.now()
+          time: Date.now() - start
         });
         await WalletModel.create({
           userId: result._id,
@@ -185,7 +185,7 @@ export default class UserController {
         api: 'register',
         isSuccess: true,
         message: '404',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(404).send(Response.generator(404));
     } catch (err) {
@@ -194,7 +194,7 @@ export default class UserController {
         api: 'hotpVerify',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -219,7 +219,7 @@ export default class UserController {
             api: 'login',
             isSuccess: true,
             message: '200',
-            time: start - Date.now()
+            time: Date.now() - start
           });
           return reply.send(Response.generator(200, { token: await jwt.generate(result) }));
         }
@@ -229,7 +229,7 @@ export default class UserController {
         api: 'login',
         isSuccess: true,
         message: '404',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(404).send(Response.generator(404));
     } catch (err) {
@@ -238,7 +238,7 @@ export default class UserController {
         api: 'login',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -260,7 +260,7 @@ export default class UserController {
         api: 'refreshToken',
         isSuccess: true,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.send(Response.generator(200, { token: decode }));
     } catch (err) {
@@ -277,7 +277,7 @@ export default class UserController {
           api: 'refreshToken',
           isSuccess: true,
           message: '200',
-          time: start - Date.now()
+          time: Date.now() - start
         });
         return reply
           .status(200)
@@ -304,7 +304,7 @@ export default class UserController {
         api: 'find',
         isSuccess: true,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(200).send(Response.generator(200, result));
     } catch (err) {
@@ -313,7 +313,7 @@ export default class UserController {
         api: 'find',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -334,7 +334,7 @@ export default class UserController {
         api: 'findOne',
         isSuccess: true,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(200).send(Response.generator(200, result.docs[0]));
     } catch (err) {
@@ -343,7 +343,7 @@ export default class UserController {
         api: 'findOne',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -367,7 +367,7 @@ export default class UserController {
         api: 'findOne',
         isSuccess: true,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(200).send(Response.generator(200, result));
     } catch (err) {
@@ -376,7 +376,7 @@ export default class UserController {
         api: 'findOne',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -413,7 +413,7 @@ export default class UserController {
           api: 'update',
           isSuccess: true,
           message: '200',
-          time: start - Date.now()
+          time: Date.now() - start
         });
         return reply.send(Response.generator(200, update));
       }
@@ -422,7 +422,7 @@ export default class UserController {
         api: 'update',
         isSuccess: true,
         message: '404',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(404).send(Response.generator(404));
     } catch (err) {
@@ -431,7 +431,7 @@ export default class UserController {
         api: 'update',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -443,7 +443,7 @@ export default class UserController {
    * @param {request} req 
    * @param {Reply} reply 
    */
-  async updateSuperAadmin(req, reply) {
+  async updateSuperAdmin(req, reply) {
     const start = Date.now();
     try {
       const { password, ...result } = req.body;
@@ -469,7 +469,7 @@ export default class UserController {
           api: 'update',
           isSuccess: true,
           message: '200',
-          time: start - Date.now()
+          time: Date.now() - start
         });
         return reply.send(Response.generator(200, update));
       }
@@ -478,7 +478,7 @@ export default class UserController {
         api: 'update',
         isSuccess: true,
         message: '404',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(404).send(Response.generator(404));
     } catch (err) {
@@ -487,7 +487,7 @@ export default class UserController {
         api: 'update',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -498,7 +498,7 @@ export default class UserController {
     * @param {request} req 
     * @param {Reply} reply 
     */
-  async updateSuperAadminBio(req, reply) {
+  async updateSuperAdminBio(req, reply) {
     const start = Date.now();
     try {
       const { description, files } = req.body;
@@ -517,7 +517,7 @@ export default class UserController {
           api: 'update',
           isSuccess: true,
           message: '200',
-          time: start - Date.now()
+          time: Date.now() - start
         });
         return reply.send(Response.generator(200, update));
       }
@@ -526,7 +526,7 @@ export default class UserController {
         api: 'update',
         isSuccess: true,
         message: '404',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(404).send(Response.generator(404));
     } catch (err) {
@@ -535,7 +535,7 @@ export default class UserController {
         api: 'update',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -559,7 +559,7 @@ export default class UserController {
         api: 'findOne',
         isSuccess: true,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(200).send(Response.generator(200, result.docs[0]));
     } catch (err) {
@@ -568,7 +568,7 @@ export default class UserController {
         api: 'findOne',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -598,7 +598,7 @@ export default class UserController {
           api: 'update',
           isSuccess: true,
           message: '200',
-          time: start - Date.now()
+          time: Date.now() - start
         });
         return reply.send(Response.generator(200, update));
       }
@@ -607,7 +607,7 @@ export default class UserController {
         api: 'update',
         isSuccess: true,
         message: '404',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(404).send(Response.generator(404));
     } catch (err) {
@@ -616,7 +616,7 @@ export default class UserController {
         api: 'update',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -715,7 +715,8 @@ export default class UserController {
           api: 'update',
           isSuccess: true,
           message: '200',
-          time: start - Date.now()
+          time: Date.now() - start
+        });
         });
         return reply.send(Response.generator(200, update));
       }
@@ -724,7 +725,7 @@ export default class UserController {
         api: 'update',
         isSuccess: true,
         message: '404',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(404).send(Response.generator(404));
     } catch (err) {
@@ -733,11 +734,13 @@ export default class UserController {
         api: 'update',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
   }
+
+
   /**
    * @description :: Remove Documents
    * @param {request} req 
@@ -756,7 +759,7 @@ export default class UserController {
           api: 'remove',
           isSuccess: true,
           message: '200',
-          time: start - Date.now()
+          time: Date.now() - start
         });
         return reply.send(Response.generator(200));
       }
@@ -766,7 +769,7 @@ export default class UserController {
         api: 'remove',
         isSuccess: true,
         message: '404',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(404).send(Response.generator(404));
     } catch (err) {
@@ -775,7 +778,7 @@ export default class UserController {
         api: 'remove',
         isSuccess: false,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }

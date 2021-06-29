@@ -40,7 +40,7 @@ export default class Product {
         isSuccess: true,
         ip: req.clientIp,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.send(Response.generator(200, result));
     } catch (err) {
@@ -50,7 +50,7 @@ export default class Product {
         isSuccess: false,
         ip: req.clientIp,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -111,7 +111,7 @@ export default class Product {
         isSuccess: true,
         ip: req.clientIp,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.send(Response.generator(200, result));
     } catch (err) {
@@ -121,7 +121,7 @@ export default class Product {
         isSuccess: false,
         ip: req.clientIp,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -144,7 +144,7 @@ export default class Product {
         isSuccess: true,
         ip: req.clientIp,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.send(Response.generator(200, result));
     } catch (err) {
@@ -154,7 +154,7 @@ export default class Product {
         isSuccess: false,
         ip: req.clientIp,
         message: err.message,
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
@@ -175,7 +175,7 @@ export default class Product {
         isSuccess: true,
         ip: req.clientIp,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(200).send(Response.generator(200, result));
     } catch (err) {
@@ -185,7 +185,7 @@ export default class Product {
         isSuccess: true,
         ip: req.clientIp,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(err);
     }
@@ -212,7 +212,7 @@ export default class Product {
         isSuccess: true,
         ip: req.clientIp,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return result ?
         reply.status(200).send(Response.generator(200, result)) :
@@ -224,7 +224,7 @@ export default class Product {
         isSuccess: true,
         ip: req.clientIp,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(err);
     }
@@ -246,7 +246,7 @@ export default class Product {
         isSuccess: true,
         ip: req.clientIp,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return result ?
         reply.status(200).send(Response.generator(200, result)) :
@@ -258,7 +258,7 @@ export default class Product {
         isSuccess: true,
         ip: req.clientIp,
         message: '200',
-        time: start - Date.now()
+        time: Date.now() - start
       });
       return reply.status(500).send(Response.generator(500, err.message));
     }
