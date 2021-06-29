@@ -51,6 +51,7 @@ const schema = new Schema(
       check: { type: String, required: false },
       turnover: { type: String, required: false },
       nationalCard: { type: String, required: false },
+      isEnable: { type: Boolean, required: true, default: false }
     },
     bio: {
       description: { type: String, required: false },
