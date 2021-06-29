@@ -717,6 +717,50 @@ export default class UserController {
           message: '200',
           time: Date.now() - start
         });
+        return reply.send(Response.generator(200, update));
+      }
+      Logger.info({
+        controller: 'User',
+        api: 'update',
+        isSuccess: true,
+        message: '404',
+        time: Date.now() - start
+      });
+      return reply.status(404).send(Response.generator(404));
+    } catch (err) {
+      Logger.error({
+        controller: 'User',
+        api: 'update',
+        isSuccess: false,
+        message: err.message,
+        time: Date.now() - start
+      });
+      return reply.status(500).send(Response.generator(500, err.message));
+    }
+  }
+
+
+  /**
+   * @description :: update Documents
+   * @param {request} req 
+   * @param {Reply} reply 
+   */
+  async updateInstallment(req, reply) {
+    const start = Date.now();
+    try {
+      const { check, turnover, nationalCard } = req.body;
+      const update = await UserModel.updateOne(
+        { _id: req.user._id },
+        { $set: { Installment: { check, turnover, nationalCard } } },
+        { new: true }
+      );
+      if (update) {
+        Logger.info({
+          controller: 'User',
+          api: 'update',
+          isSuccess: true,
+          message: '200',
+          time: Date.now() - start
         });
         return reply.send(Response.generator(200, update));
       }
