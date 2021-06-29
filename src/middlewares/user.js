@@ -133,6 +133,7 @@ export default {
     },
 
   },
+
   // @description :: Schema FindOne
   findOne: {
     schema: {
@@ -208,6 +209,29 @@ export default {
       return (data) => schema.validate(data);
     },
   },
+
+  updateInstallment: {
+    schema: {
+      body: joi.object({
+        check: joi
+          .string()
+          .trim()
+          .messages(messages),
+        turnover: joi
+          .string()
+          .trim()
+          .messages(messages),
+        nationalCard: joi
+          .string()
+          .trim()
+          .messages(messages)
+      }),
+    },
+    validatorCompiler: ({ schema }) => {
+      return (data) => schema.validate(data);
+    },
+  },
+
   // @description :: Schema Delete
   delete: {
     schema: {
