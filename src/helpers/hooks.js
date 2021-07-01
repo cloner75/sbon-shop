@@ -30,6 +30,7 @@ class Hooks {
    * @param {reply} reply 
    */
   static async authorization(req, reply) {
+    req.executionTime = Date.now();
     try {
       if (authConfig[req.routerPath] && authConfig[req.routerPath].isAuth) {
         if (req.headers.authorization) {
