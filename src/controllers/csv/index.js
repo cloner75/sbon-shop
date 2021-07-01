@@ -8,7 +8,7 @@ import ProductModel from './../../models/product/product';
 import ListModel from './../../models/user/list';
 
 // Helpers
-import Response from './../../helpers/response';
+import ResponseGenerator from './../../helpers/response';
 import Logger from './../../helpers/logger';
 
 const opts = {
@@ -27,7 +27,7 @@ const opts = {
 
 // Consts
 const CSV = 'csv';
-
+const Response = new ResponseGenerator('csv');
 /**
  * @description :: The Controller service
  * @class Controller
@@ -41,11 +41,12 @@ export default class CsvController {
    * @param {Reply} reply 
    */
   async create(req, reply) {
+    let executionTime = Date.now();
     try {
       const { userId, listName } = req.params;
       const list = await ListModel.findOne({ userId, name: listName });
       if (!list || !list.products || !list.products.length) {
-        return reply.status(404).send(Response.generator(404));
+        return reply.status(404).send(Response.generator(404, 'create', executionTime));
       }
       const products = await ProductModel.find({ _id: { $in: list.products } });
 
