@@ -3,20 +3,30 @@ import strongSoap from 'strong-soap';
 
 // Models
 import OrderModel from './../../models/user/order';
-import ProductModel from './../../models/product/product';
-import UserModel from './../../models/user/user';
 import WalletModel from './../../models/user/wallet';
 
 // Helpers
 import MongoHelper from './../../helpers/mongo';
-import Response from './../../helpers/response';
+import ResponseGenerator from './../../helpers/response';
 
 // Services
 import OfferService from './../../services/product/offer';
 import OrderService from './../../services/user/order';
 
 // Consts
+const Response = new ResponseGenerator('order-service');
 const ORDER = 'order';
+const METHODS = {
+  CREATE: 'create',
+  FIND: 'find',
+  FIND_ONE: 'find-one',
+  REMOVE: 'remove',
+  UPDATE: 'update',
+  FIND_SUPER_ADMIN: 'findSuperAdmin',
+  VERIFY: 'verify',
+  PAY: 'pay',
+  CANCEL_ORDER: 'cancelOrder',
+};
 
 /**
  * @description :: convert toman to rial
@@ -49,7 +59,9 @@ export default class OrderController extends OfferService {
         await OrderService.singleOrderCreate(req);
       return reply.status(result.status).send(result.response);
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.CREATE, req.executionTime, err)
+      );
     }
   }
 
@@ -66,9 +78,13 @@ export default class OrderController extends OfferService {
         ...where
       }, options);
 
-      return reply.status(200).send(Response.generator(200, result.docs));
+      return reply.status(200).send(
+        Response.generator(200, result.docs, METHODS.FIND, req.executionTime)
+      );
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND, req.executionTime, err)
+      );
     }
   }
 
@@ -83,9 +99,13 @@ export default class OrderController extends OfferService {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, ORDER);
       const result = await OrderModel.paginate({ ...where, status: 1 }, options);
-      return reply.status(200).send(Response.generator(200, result));
+      return reply.status(200).send(
+        Response.generator(200, result, METHODS.FIND_SUPER_ADMIN, req.executionTime)
+      );
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND_SUPER_ADMIN, req.executionTime, err)
+      );
     }
   }
 
@@ -96,11 +116,9 @@ export default class OrderController extends OfferService {
    * @param {Reply} reply 
    */
   async update(req, reply) {
-    console.log('update order =>');
     try {
       const orderId = req.params.orderId;
       const getOrder = await OrderModel.findOne({ orderId });
-      console.log('update getOrder => ', getOrder);
       if (!getOrder) {
         return reply.redirect(301, `/payment/verify/${orderId}`);
       }
@@ -111,8 +129,6 @@ export default class OrderController extends OfferService {
             Token: getOrder.token
           }
         });
-        console.log('after confirm payment result => ', result);
-
         if (result.ConfirmPaymentResult.Status == 0 && result.ConfirmPaymentResult.RRN) {
           await OrderModel.updateOne({ orderId }, {
             $set: {
@@ -143,14 +159,15 @@ export default class OrderController extends OfferService {
             },
             { upsert: true }
           );
-        } else if(result.ConfirmPaymentResult.Status !== -1533) {
+        } else if (result.ConfirmPaymentResult.Status !== -1533) {
           await OrderModel.updateOne({ orderId }, { $set: { status: 3 } });
         }
         return reply.redirect(301, `/payment/verify/${orderId}`);
       });
     } catch (err) {
-      console.log('update err =>', err);
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.CREATE, req.executionTime, err)
+      );
     }
   }
 
@@ -165,12 +182,10 @@ export default class OrderController extends OfferService {
       const orderId = req.body.orderId;
       const getOrder = await OrderModel.findOne({ orderId });
       if (!getOrder) {
-        return reply.status(404).send(Response.generator(404, {}));
+        return reply.status(404).send(
+          Response.generator(404, {}, METHODS.VERIFY, req.executionTime)
+        );
       }
-      console.log({
-        LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
-        Token: getOrder.token
-      });
       strongSoap.soap.createClient("https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL", {}, async (_, client) => {
         const { result } = await client.ConfirmPayment({
           requestData: {
@@ -184,11 +199,14 @@ export default class OrderController extends OfferService {
             orderStatus: getOrder.status
           }
         );
-        console.log({ result });
-        return reply.send(Response.generator(200, result));
+        return reply.send(
+          Response.generator(200, result, METHODS.VERIFY, req.executionTime)
+        );
       });
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.VERIFY, req.executionTime, err)
+      );
     }
   }
 
@@ -202,7 +220,9 @@ export default class OrderController extends OfferService {
     try {
       let getOrder = await OrderModel.findById(req.body._id);
       if (!getOrder) {
-        return res.staus(404).send(Response.generator(404, err.message));
+        return res.staus(404).send(
+          Response.generator(404, {}, METHODS.PAY, req.executionTime)
+        );
       }
       strongSoap.soap.createClient(process.env.IPG_GET_TOKEN, {}, async (_, client) => {
         const { result } = await client.SalePaymentRequest({
@@ -213,7 +233,6 @@ export default class OrderController extends OfferService {
             CallBackUrl: `https://sbon.ir/pay/${getOrder.orderId}`
           }
         });
-        console.log('get result create client soap => ', result);
         if (result.SalePaymentRequestResult.Token === 0) {
           return reply.send(Response.generator(400, {
             status: result.SalePaymentRequestResult.Status,
@@ -221,18 +240,23 @@ export default class OrderController extends OfferService {
           }));
         } else {
           await OrderModel.updateOne({ _id: req.body._id }, { $set: { token: result.SalePaymentRequestResult.Token } });
-          console.log('show result after update =>', {
-            token: result.SalePaymentRequestResult.Token,
-            address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
-          });
-          return reply.send(Response.generator(200, {
-            token: result.SalePaymentRequestResult.Token,
-            address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
-          }));
+          return reply.send(
+            Response.generator(
+              200,
+              {
+                token: result.SalePaymentRequestResult.Token,
+                address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
+              },
+              METHODS.PAY,
+              req.executionTime
+            )
+          );
         }
       });
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.PAY, req.executionTime, err)
+      );
     }
   }
 
@@ -249,10 +273,16 @@ export default class OrderController extends OfferService {
         { new: true }
       );
       return getOrder ?
-        reply.status(200).send(Response.generator(200, getOrder)) :
-        reply.status(404).send(Response.generator(404));
+        reply.status(200).send(
+          Response.generator(200, getOrder, METHODS.CANCEL_ORDER, req.executionTime)
+        ) :
+        reply.status(404).send(
+          Response.generator(404, {}, METHODS.CANCEL_ORDER, req.executionTime)
+        );
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.CANCEL_ORDER, req.executionTime, err)
+      );
     }
   }
 }

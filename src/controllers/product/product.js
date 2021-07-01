@@ -4,12 +4,19 @@ import ProductModel from "./../../models/product/product";
 
 // Helper
 import MongoHelper from "./../../helpers/mongo";
-import Response from "./../../helpers/response";
-import Logger from "./../../helpers/logger";
+import ResponseGenerator from "./../../helpers/response";
 
 // Consts
+const Response = new ResponseGenerator('product-service');
 const PRODUCT = 'product';
-
+const METHODS = {
+  CREATE: 'create',
+  FIND: 'find',
+  SEARCH: 'search',
+  FIND_ONE: 'find-one',
+  REMOVE: 'remove',
+  UPDATE: 'update'
+};
 /**
  * @description :: The Controller service
  *
@@ -25,7 +32,6 @@ export default class Product {
    * @param {Reply} reply 
    */
   async find(req, reply) {
-    const start = Date.now();
     try {
       const { productsId, ...query } = req.query;
       const { where, options } = MongoHelper.initialMongoQuery(query, PRODUCT);
@@ -34,25 +40,13 @@ export default class Product {
         Object.assign(where, { _id: { $in: ids } });
       }
       const result = await ProductModel.paginate({ ...where, status: { $ne: 4 } }, options);
-      Logger.info({
-        controller: 'Product',
-        api: 'find',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.send(Response.generator(200, result));
+      return reply.send(
+        Response.generator(200, result, METHODS.FIND, req.executionTime)
+      );
     } catch (err) {
-      Logger.error({
-        controller: 'Product',
-        api: 'find',
-        isSuccess: false,
-        ip: req.clientIp,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND, req.executionTime, err)
+      );
     }
   }
 
@@ -62,7 +56,6 @@ export default class Product {
   * @param {Reply} reply 
   */
   async search(req, reply) {
-    const start = Date.now();
     try {
       const { type, title, brandId, categoriesId, priceMin, priceMax } = req.query;
       let searchBox = {};
@@ -93,7 +86,9 @@ export default class Product {
           break;
         case 1:
           if (!title) {
-            return res.status(422).send(Response.generator(422));
+            return res.status(422).send(
+              Response.generator(422, {}, METHODS.SEARCH, req.executionTime)
+            );
           }
           Object.assign(searchBox, {
             $or: [
@@ -105,25 +100,13 @@ export default class Product {
       }
       const { options } = MongoHelper.initialMongoQuery(req.query, PRODUCT);
       const result = await ProductModel.paginate(searchBox, options);
-      Logger.info({
-        controller: 'Product',
-        api: 'find',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.send(Response.generator(200, result));
+      return reply.send(
+        Response.generator(200, result, METHODS.SEARCH, req.executionTime)
+      );
     } catch (err) {
-      Logger.error({
-        controller: 'Product',
-        api: 'find',
-        isSuccess: false,
-        ip: req.clientIp,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.SEARCH, req.executionTime, err)
+      );
     }
   }
 
@@ -131,32 +114,18 @@ export default class Product {
    * @description :: Get One Document
    * @param {request} req 
    * @param {Reply} reply 
-   */
+  */
   async findOne(req, reply) {
-    const start = Date.now();
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, PRODUCT);
-
       const result = await ProductModel.paginate({ ...where, status: { $ne: 4 }, _id: req.params.id }, options);
-      Logger.info({
-        controller: 'Product',
-        api: 'findOne',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.send(Response.generator(200, result));
+      return reply.send(
+        Response.generator(200, result, METHODS.FIND_ONE, req.executionTime)
+      );
     } catch (err) {
-      Logger.error({
-        controller: 'Product',
-        api: 'findOne',
-        isSuccess: false,
-        ip: req.clientIp,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND_ONE, req.executionTime, err)
+      );
     }
   }
 
@@ -166,28 +135,15 @@ export default class Product {
    * @param {Reply} reply 
    */
   async create(req, reply) {
-    const start = Date.now();
     try {
       const result = await ProductModel.create({ ...req.body, ownerId: req.user._id });
-      Logger.info({
-        controller: 'Product',
-        api: 'create',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(200).send(Response.generator(200, result));
+      return reply.status(200).send(
+        Response.generator(200, result, METHODS.CREATE, req.executionTime)
+      );
     } catch (err) {
-      Logger.error({
-        controller: 'Product',
-        api: 'create',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(500).send(err);
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.CREATE, req.executionTime, err)
+      );
     }
   }
 
@@ -197,36 +153,24 @@ export default class Product {
    * @param {Reply} reply 
    */
   async update(req, reply) {
-    const start = Date.now();
     try {
       const result = await ProductModel.findOneAndUpdate({
         _id: req.params.id,
-        // minishop: req.user.minishop
       },
         { ...req.body, ownerId: req.user._id },
         { new: true }
       );
-      Logger.info({
-        controller: 'Product',
-        api: 'update',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
       return result ?
-        reply.status(200).send(Response.generator(200, result)) :
-        reply.status(404).send(Response.generator(404));
+        reply.status(200).send(
+          Response.generator(200, result, METHODS.UPDATE, req.executionTime)
+        ) :
+        reply.status(404).send(
+          Response.generator(404, {})
+        );
     } catch (err) {
-      Logger.error({
-        controller: 'Product',
-        api: 'update',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(500).send(err);
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.UPDATE, req.executionTime, err)
+      );
     }
   }
 
@@ -236,31 +180,20 @@ export default class Product {
    * @param {Reply} reply 
    */
   async remove(req, reply) {
-    const start = Date.now();
     try {
       const { id } = req.params;
       const result = await ProductModel.findOneAndUpdate({ _id: id }, { ownerId: req.user._id, status: 4 });
-      Logger.info({
-        controller: 'Product',
-        api: 'remove',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
       return result ?
-        reply.status(200).send(Response.generator(200, result)) :
-        reply.status(404).send(Response.generator(404));
+        reply.status(200).send(
+          Response.generator(200, result, METHODS.REMOVE, req.executionTime)
+        ) :
+        reply.status(404).send(
+          Response.generator(404, {}, METHODS.REMOVE, req.executionTime)
+        );
     } catch (err) {
-      Logger.info({
-        controller: 'Product',
-        api: 'remove',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.REMOVE, req.executionTime, err)
+      );
     }
   }
 }

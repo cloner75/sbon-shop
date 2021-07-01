@@ -10,8 +10,7 @@ import WalletModel from './../../models/user/wallet';
 // Helpers
 import JWT from './../../helpers/jsonwebtoken';
 import MongoHelper from './../../helpers/mongo';
-import Response from './../../helpers/response';
-import Logger from './../../helpers/logger';
+import ResponseGenerator from './../../helpers/response';
 import Transaction from './../../helpers/transaction';
 
 // Configs
@@ -19,9 +18,29 @@ import configs from './../../configs/config';
 
 
 // Consts
-const USER = 'user';
+const Response = new ResponseGenerator('user-service');
 const jwt = new JWT();
 const transaction = new Transaction();
+const METHODS = {
+  hotpSend: 'hotpSend',
+  hotpVerify: 'hotpVerify',
+  register: 'register',
+  login: 'login',
+  refreshToken: 'refreshToken',
+  find: 'find',
+  findOne: 'findOne',
+  findOneForComment: 'findOneForComment',
+  update: 'update',
+  updateSuperAdmin: 'updateSuperAdmin',
+  updateSuperAdminBio: 'updateSuperAdminBio',
+  findSuperAadmin: 'findSuperAadmin',
+  updateTelegramToken: 'updateTelegramToken',
+  updateLocation: 'updateLocation',
+  updateInstallment: 'updateInstallment',
+  remove: 'remove',
+  logout: 'logout',
+};
+const USER = 'user';
 
 /**
  * @description :: The Controller service
@@ -38,28 +57,14 @@ export default class UserController {
    * @param {Response} reply 
    */
   async hotpSend(req, reply) {
-    const start = Date.now();
+
     try {
       const { phone } = req.body;
       const checkUnique = await UserModel.findOne({ phone });
       if (checkUnique) {
         if (checkUnique.status === 1) {
-          Logger.info({
-            controller: 'User',
-            api: 'hotpSend',
-            isSuccess: true,
-            message: '409',
-            time: Date.now() - start
-          });
-          return reply.status(409).send(Response.generator(409));
+          return reply.status(409).send(Response.generator(409, {}, METHODS.hotpSend, req.executionTime));
         } else {
-          Logger.info({
-            controller: 'User',
-            api: 'hotpSend',
-            isSuccess: true,
-            message: '201',
-            time: Date.now() - start
-          });
           const secret = phone + Date.now();
           const token = hotp.generate(process.env.HOTP_SECRET, secret);
           await transaction.sendSms(phone, token);
@@ -67,33 +72,25 @@ export default class UserController {
           return reply.status(200).send(
             Response.generator(200, {
               createUser: checkUnique
-            }));
+            }, METHODS.hotpSend, req.executionTime)
+          );
         }
       } else {
-        Logger.info({
-          controller: 'User',
-          api: 'hotpSend',
-          isSuccess: true,
-          message: '201',
-          time: Date.now() - start
-        });
         const secret = phone + Date.now();
         const token = hotp.generate(process.env.HOTP_SECRET, secret);
         await transaction.sendSms(phone, token);
         return reply.status(200).send(
-          Response.generator(200, {
-            createUser: await UserModel.create({ phone, secret })
-          }));
+          Response.generator(200,
+            {
+              createUser: await UserModel.create({ phone, secret })
+            },
+            METHODS.hotpSend,
+            req.executionTime
+          )
+        );
       }
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'hotpSend',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.hotpSend, req.executionTime, err));
     }
   }
 
@@ -103,7 +100,6 @@ export default class UserController {
    * @param {Response} reply 
    */
   async hotpVerify(req, reply) {
-    const start = Date.now();
     const { phone, token } = req.body;
     try {
       const getUser = await UserModel.findOne({ phone });
@@ -116,33 +112,11 @@ export default class UserController {
         counter: getUser.secret,
       });
       if (verify) {
-        Logger.info({
-          controller: 'User',
-          api: 'hotpVerify',
-          isSuccess: true,
-          message: '202',
-          time: Date.now() - start
-        });
-        return reply.status(202).send(Response.generator(202));
+        return reply.status(202).send(Response.generator(202, {}, METHODS.hotpVerify, req.executionTime));
       }
-
-      Logger.info({
-        controller: 'User',
-        api: 'hotpVerify',
-        isSuccess: true,
-        message: '400',
-        time: Date.now() - start
-      });
-      return reply.status(400).send(Response.generator(400));
+      return reply.status(400).send(Response.generator(400, {}, METHODS.hotpVerify, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'hotpVerify',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.hotpVerify, req.executionTime, err));
     }
   }
 
@@ -152,7 +126,6 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async register(req, reply) {
-    const start = Date.now();
     try {
       const { username, password, phone } = req.body;
       const salt = await bcrypt.genSaltSync(configs.bcrypt.saltRound);
@@ -165,38 +138,21 @@ export default class UserController {
 
       if (completeUser) {
         const { password, salt, ...result } = completeUser.toObject();
-        Logger.info({
-          controller: 'User',
-          api: 'register',
-          isSuccess: true,
-          message: '200',
-          time: Date.now() - start
-        });
         await WalletModel.create({
           userId: result._id,
           logs: [{
             action: 'ثبت نام',
           }]
         });
-        return reply.send(Response.generator(200, { ...result, token: await jwt.generate(result) }));
+        return reply.send(Response.generator(200,
+          { ...result, token: await jwt.generate(result) },
+          METHODS.register, req.executionTime
+        )
+        );
       }
-      Logger.info({
-        controller: 'User',
-        api: 'register',
-        isSuccess: true,
-        message: '404',
-        time: Date.now() - start
-      });
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(Response.generator(404, {}, METHODS.register, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'hotpVerify',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.register, req.executionTime, err));
     }
   }
 
@@ -206,7 +162,6 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async login(req, reply) {
-    const start = Date.now();
     try {
       const { phone, password: passwordInput } = req.body;
       const getUser = await UserModel.findOne({ phone });
@@ -214,33 +169,16 @@ export default class UserController {
         const { password, phone, locations, ...result } = getUser.toObject();
         const checkPassword = bcrypt.compareSync(passwordInput, password);
         if (checkPassword) {
-          Logger.info({
-            controller: 'User',
-            api: 'login',
-            isSuccess: true,
-            message: '200',
-            time: Date.now() - start
-          });
-          return reply.send(Response.generator(200, { token: await jwt.generate(result) }));
+          return reply.send(Response.generator(200,
+            { token: await jwt.generate(result) },
+            METHODS.login, req.executionTime
+          )
+          );
         }
       }
-      Logger.info({
-        controller: 'User',
-        api: 'login',
-        isSuccess: true,
-        message: '404',
-        time: Date.now() - start
-      });
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(Response.generator(404, {}, METHODS.login, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'login',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.login, req.executionTime, err));
     }
   }
 
@@ -250,41 +188,33 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async refreshToken(req, reply) {
-    const start = Date.now();
     let token;
     try {
       token = req.headers.authorization;
       const decode = jwt.verify(token);
-      Logger.info({
-        controller: 'User',
-        api: 'refreshToken',
-        isSuccess: true,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.send(Response.generator(200, { token: decode }));
+      return reply.send(
+        Response.generator(200,
+          { token: decode },
+          METHODS.refreshToken, req.executionTime
+        )
+      );
     } catch (err) {
       if (err.message === 'jwt expired') {
         const decode = jwt.decode(token);
         const getUser = await UserModel.findById(decode._id);
         if (!getUser) {
-          return reply.status(404).send(Response.generator(404));
+          return reply.status(404).send(
+            Response.generator(404, {}, METHODS.refreshToken, req.executionTime)
+          );
         }
         const { password, salt, phone, ...result } = getUser.toObject();
         token = await jwt.generate(result);
-        Logger.info({
-          controller: 'User',
-          api: 'refreshToken',
-          isSuccess: true,
-          message: '200',
-          time: Date.now() - start
-        });
         return reply
           .status(200)
-          .send(Response.generator(200, { token }))
+          .send(Response.generator(200, { token }, METHODS.refreshToken, req.executionTime))
           .headers({ 'authorization': token });
       } else {
-        return reply.status(500).send(Response.generator(500, err.message));
+        return reply.status(500).send(Response.ErrorHandler(METHODS.refreshToken, req.executionTime, err));
       }
     }
   }
@@ -295,27 +225,12 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async find(req, reply) {
-    const start = Date.now();
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, USER);
       const result = await UserModel.paginate(where, options);
-      Logger.info({
-        controller: 'User',
-        api: 'find',
-        isSuccess: true,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(200).send(Response.generator(200, result));
+      return reply.status(200).send(Response.generator(200, result, METHODS.find, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'find',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.find, req.executionTime, err));
     }
   }
 
@@ -325,27 +240,12 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async findOne(req, reply) {
-    const start = Date.now();
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, USER);
       const result = await UserModel.paginate({ _id: req.user._id, ...where }, options);
-      Logger.info({
-        controller: 'User',
-        api: 'findOne',
-        isSuccess: true,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(200).send(Response.generator(200, result.docs[0]));
+      return reply.status(200).send(Response.generator(200, result.docs[0], METHODS.findOne, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'findOne',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.findOne, req.executionTime, err));
     }
   }
   /**
@@ -354,7 +254,6 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async findOneForComment(req, reply) {
-    const start = Date.now();
     try {
       const { usersId, ...query } = req.query;
       const ids = usersId.split(',').filter(item => /^[0-9a-fA-F]{24}$/.test(item.trim()));
@@ -362,23 +261,9 @@ export default class UserController {
       Object.assign(where, { _id: { $in: ids } });
       Object.assign(options, { select: 'username avatar' });
       const result = await UserModel.paginate(where, options);
-      Logger.info({
-        controller: 'User',
-        api: 'findOne',
-        isSuccess: true,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(200).send(Response.generator(200, result));
+      return reply.status(200).send(Response.generator(200, result, METHODS.findOneForComment, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'findOne',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.findOneForComment, req.executionTime, err));
     }
   }
 
@@ -388,7 +273,6 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async update(req, reply) {
-    const start = Date.now();
     try {
       const { password, ...result } = req.body;
       if (password) {
@@ -408,32 +292,11 @@ export default class UserController {
         }
       );
       if (update) {
-        Logger.info({
-          controller: 'User',
-          api: 'update',
-          isSuccess: true,
-          message: '200',
-          time: Date.now() - start
-        });
-        return reply.send(Response.generator(200, update));
+        return reply.send(Response.generator(200, update, METHODS.update, req.executionTime));
       }
-      Logger.info({
-        controller: 'User',
-        api: 'update',
-        isSuccess: true,
-        message: '404',
-        time: Date.now() - start
-      });
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(Response.generator(404, {}, METHODS.update, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'update',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.update, req.executionTime, err));
     }
   }
 
@@ -444,7 +307,6 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async updateSuperAdmin(req, reply) {
-    const start = Date.now();
     try {
       const { password, ...result } = req.body;
       if (password) {
@@ -464,32 +326,11 @@ export default class UserController {
         }
       );
       if (update) {
-        Logger.info({
-          controller: 'User',
-          api: 'update',
-          isSuccess: true,
-          message: '200',
-          time: Date.now() - start
-        });
-        return reply.send(Response.generator(200, update));
+        return reply.send(Response.generator(200, update, METHODS.updateSuperAdmin, req.executionTime));
       }
-      Logger.info({
-        controller: 'User',
-        api: 'update',
-        isSuccess: true,
-        message: '404',
-        time: Date.now() - start
-      });
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(Response.generator(404, {}, METHODS.updateSuperAdmin, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'update',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.updateSuperAdmin, req.executionTime, err));
     }
   }
 
@@ -499,10 +340,8 @@ export default class UserController {
     * @param {Reply} reply 
     */
   async updateSuperAdminBio(req, reply) {
-    const start = Date.now();
     try {
       const { description, files } = req.body;
-
       const update = await UserModel.findOneAndUpdate(
         { _id: req.params.id },
         { $set: { bio: { description, files } } },
@@ -512,32 +351,11 @@ export default class UserController {
         }
       );
       if (update) {
-        Logger.info({
-          controller: 'User',
-          api: 'update',
-          isSuccess: true,
-          message: '200',
-          time: Date.now() - start
-        });
-        return reply.send(Response.generator(200, update));
+        return reply.send(Response.generator(200, update, METHODS.updateSuperAdminBio, req.executionTime));
       }
-      Logger.info({
-        controller: 'User',
-        api: 'update',
-        isSuccess: true,
-        message: '404',
-        time: Date.now() - start
-      });
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(Response.generator(404, {}, METHODS.updateSuperAdminBio, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'update',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.updateSuperAdminBio, req.executionTime, err));
     }
   }
 
@@ -547,30 +365,15 @@ export default class UserController {
     * @param {Reply} reply 
     */
   async findSuperAadmin(req, reply) {
-    const start = Date.now();
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, USER);
       const result = await UserModel.paginate({
         ...where,
         _id: req.params.id
       }, options);
-      Logger.info({
-        controller: 'User',
-        api: 'findOne',
-        isSuccess: true,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(200).send(Response.generator(200, result.docs[0]));
+      return reply.status(200).send(Response.generator(200, result.docs[0], METHODS.findSuperAadmin, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'findOne',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.findSuperAadmin, req.executionTime, err));
     }
   }
 
@@ -581,7 +384,6 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async updateTelegramToken(req, reply) {
-    const start = Date.now();
     try {
       const chatId = req.body.chatId;
       const update = await UserModel.findOneAndUpdate(
@@ -593,32 +395,11 @@ export default class UserController {
         }
       );
       if (update) {
-        Logger.info({
-          controller: 'User',
-          api: 'update',
-          isSuccess: true,
-          message: '200',
-          time: Date.now() - start
-        });
-        return reply.send(Response.generator(200, update));
+        return reply.send(Response.generator(200, update, METHODS.updateTelegramToken, req.executionTime));
       }
-      Logger.info({
-        controller: 'User',
-        api: 'update',
-        isSuccess: true,
-        message: '404',
-        time: Date.now() - start
-      });
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(Response.generator(404, {}, METHODS.updateTelegramToken, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'update',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.updateTelegramToken, req.executionTime, err));
     }
   }
 
@@ -628,7 +409,6 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async updateLocation(req, reply) {
-    const start = Date.now();
     try {
       const { type, _id, ...location } = req.body;
       let insertData = {
@@ -710,32 +490,11 @@ export default class UserController {
           break;
       }
       if (update) {
-        Logger.info({
-          controller: 'User',
-          api: 'update',
-          isSuccess: true,
-          message: '200',
-          time: Date.now() - start
-        });
-        return reply.send(Response.generator(200, update));
+        return reply.send(Response.generator(200, update, METHODS.updateLocation, req.executionTime));
       }
-      Logger.info({
-        controller: 'User',
-        api: 'update',
-        isSuccess: true,
-        message: '404',
-        time: Date.now() - start
-      });
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(Response.generator(404, {}, METHODS.updateLocation, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'update',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.updateLocation, req.executionTime, err));
     }
   }
 
@@ -746,7 +505,6 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async updateInstallment(req, reply) {
-    const start = Date.now();
     try {
       const { check, turnover, nationalCard } = req.body;
       const update = await UserModel.updateOne(
@@ -755,32 +513,11 @@ export default class UserController {
         { new: true }
       );
       if (update) {
-        Logger.info({
-          controller: 'User',
-          api: 'update',
-          isSuccess: true,
-          message: '200',
-          time: Date.now() - start
-        });
-        return reply.send(Response.generator(200, update));
+        return reply.send(Response.generator(200, update, METHODS.updateInstallment, req.executionTime));
       }
-      Logger.info({
-        controller: 'User',
-        api: 'update',
-        isSuccess: true,
-        message: '404',
-        time: Date.now() - start
-      });
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(Response.generator(404, {}, METHODS.updateInstallment, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'update',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.updateInstallment, req.executionTime, err));
     }
   }
 
@@ -791,40 +528,17 @@ export default class UserController {
    * @param {Reply} reply 
    */
   async remove(req, reply) {
-    const start = Date.now();
     try {
       const update = await UserModel.updateOne({
         _id: req.user._id,
         type: { $ne: 4 }
       }, { $set: { type: 4 } });
       if (update.nModified) {
-        Logger.info({
-          controller: 'User',
-          api: 'remove',
-          isSuccess: true,
-          message: '200',
-          time: Date.now() - start
-        });
-        return reply.send(Response.generator(200));
+        return reply.send(Response.generator(200, {}, METHODS.remove, req.executionTime));
       }
-
-      Logger.info({
-        controller: 'User',
-        api: 'remove',
-        isSuccess: true,
-        message: '404',
-        time: Date.now() - start
-      });
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(Response.generator(404, {}, METHODS.remove, req.executionTime));
     } catch (err) {
-      Logger.error({
-        controller: 'User',
-        api: 'remove',
-        isSuccess: false,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(Response.ErrorHandler(METHODS.remove, req.executionTime, err));
     }
   }
 

@@ -7,18 +7,12 @@ import WalletModel from './../../models/user/wallet';
 import MongoHelper from './../../helpers/mongo';
 import ResponseGenerator from './../../helpers/response';
 
-// Configs
-import configs from './../../configs/config';
-
-
 // Consts
 const WALLET = 'wallet';
-const Response = new ResponseGenerator('order-service');
+const Response = new ResponseGenerator('wallet-service');
 const METHODS = {
-  FIND: 'find',
   FIND_ONE: 'find-one',
-  REMOVE: 'remove',
-  UPDATE: 'update',
+  CREATE: 'create',
 };
 /**
  * @description :: The Controller service
@@ -39,9 +33,13 @@ export default class UserController {
         userId: req.user._id,
         price: 0
       });
-      return reply.status(201).send(Response.generator(201, createWallet));
+      return reply.status(201).send(
+        Response.generator(201, createWallet, METHODS.CREATE, req.executionTime)
+      );
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.CREATE, req.executionTime, err)
+      );
     }
   }
 
@@ -59,45 +57,16 @@ export default class UserController {
       }, options);
 
       return result.docs[0] ?
-        reply.status(200).send(Response.generator(200, result.docs[0])) :
-        reply.status(404).send(Response.generator(404));
+        reply.status(200).send(
+          Response.generator(200, result.docs[0], METHODS.FIND_ONE, req.executionTime)
+        ) :
+        reply.status(404).send(
+          Response.generator(404, {}, METHODS.FIND_ONE, req.executionTime)
+        );
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
-    }
-  }
-
-  /**
-   * @description :: update Documents
-   * @param {request} req 
-   * @param {Reply} reply 
-   */
-  async update(req, reply) {
-    try {
-      const { password, ...result } = req.body;
-      if (password) {
-        const salt = await bcrypt.genSaltSync(configs.bcrypt.saltRound);
-        const hash = await bcrypt.hashSync(password, salt);
-        Object.assign(result, {
-          password: hash,
-          salt
-        });
-      }
-      const update = await WalletModel.findOneAndUpdate(
-        { _id: req.params.id },
-        result,
-        {
-          new: true,
-          fields: { password: 0, salt: 0 },
-        }
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND_ONE, req.executionTime, err)
       );
-      if (update) {
-        delete update.password;
-        delete update.salt;
-        return reply.send(Response.generator(200, update));
-      }
-      return reply.status(404).send(Response.generator(404));
-    } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
     }
   }
 }

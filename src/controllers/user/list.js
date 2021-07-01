@@ -8,8 +8,8 @@ import MongoHelper from './../../helpers/mongo';
 import ResponseGenerator from './../../helpers/response';
 
 // Consts
-const LIST = 'list';
 const Response = new ResponseGenerator('list-service');
+const LIST = 'list';
 const METHODS = {
   CREATE: 'create',
   FIND: 'find',
@@ -32,11 +32,13 @@ export default class ListController {
    */
   async create(req, reply) {
     try {
-      const createWallet = await ListModel.create({
+      const createList = await ListModel.create({
         userId: req.user._id,
         ...req.body
       });
-      return reply.status(201).send(Response.generator(201, createWallet));
+      return reply.status(201).send(
+        Response.generator(201, createList, METHODS.CREATE, req.executionTime)
+      );
     } catch (err) {
       return reply.status(500).send(
         Response.ErrorHandler(METHODS.CREATE, req.executionTime, err)
@@ -58,10 +60,16 @@ export default class ListController {
       }, options);
 
       return result.docs[0] ?
-        reply.status(200).send(Response.generator(200, result.docs)) :
-        reply.status(404).send(Response.generator(404));
+        reply.status(200).send(
+          Response.generator(200, result.docs, METHODS.FIND, req.executionTime)
+        ) :
+        reply.status(404).send(
+          Response.generator(404, {}, METHODS.FIND, req.executionTime)
+        );
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND, req.executionTime, err)
+      );
     }
   }
 
@@ -80,10 +88,16 @@ export default class ListController {
       }, options);
 
       return result.docs[0] ?
-        reply.status(200).send(Response.generator(200, result.docs[0])) :
-        reply.status(404).send(Response.generator(404));
+        reply.status(200).send(
+          Response.generator(200, result.docs[0], METHODS.FIND_ONE, req.executionTime)
+        ) :
+        reply.status(404).send(
+          Response.generator(404, {}, METHODS.FIND_ONE, req.executionTime)
+        );
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND_ONE, req.executionTime, err)
+      );
     }
   }
 
@@ -102,11 +116,17 @@ export default class ListController {
         }
       );
       if (update) {
-        return reply.send(Response.generator(200, update));
+        return reply.send(
+          Response.generator(200, update, METHODS.UPDATE, req.executionTime)
+        );
       }
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(
+        Response.generator(404, {}, METHODS.UPDATE, req.executionTime)
+      );
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.UPDATE, req.executionTime, err)
+      );
     }
   }
 
@@ -122,11 +142,17 @@ export default class ListController {
         { _id: req.params.id },
       );
       if (update) {
-        return reply.send(Response.generator(200, update));
+        return reply.send(
+          Response.generator(200, update, METHODS.REMOVE, req.executionTime)
+        );
       }
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(
+        Response.generator(404, {}, METHODS.REMOVE, req.executionTime)
+      );
     } catch (err) {
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.REMOVE, req.executionTime, err)
+      );
     }
   }
 }

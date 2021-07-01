@@ -11,14 +11,13 @@ import OfferService from './../../services/product/offer';
 
 
 // Consts
+const Response = new ResponseGenerator('offer-service');
 const OFFER = 'offer';
-const Response = new ResponseGenerator('comment-service');
 const METHODS = {
   CREATE: 'create',
   FIND: 'find',
-  FIND_PUBLIC: 'find-public',
   FIND_ONE: 'find-one',
-  REMOVE: 'remove',
+  FIND_ONE_DASHBOARD: 'find-dashboard',
   UPDATE: 'update'
 };
 
@@ -40,29 +39,16 @@ export default class Offer extends OfferService {
    * @param {Reply} reply 
    */
   async find(req, reply) {
-    const start = Date.now();
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, OFFER);
       const result = await offerModel.paginate(where, options);
-      Logger.info({
-        controller: 'Offer',
-        api: 'find',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.send(Response.generator(200, result));
+      return reply.send(
+        Response.generator(200, result, METHODS.FIND, req.executionTime)
+      );
     } catch (err) {
-      Logger.error({
-        controller: 'Offer',
-        api: 'find',
-        isSuccess: false,
-        ip: req.clientIp,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND, req.executionTime, err)
+      );
     }
   }
 
@@ -72,36 +58,23 @@ export default class Offer extends OfferService {
    * @param {Reply} reply 
    */
   async findOne(req, reply) {
-    const start = Date.now();
     try {
       const { status, result } = await super.findOne(req.params.code);
-      Logger.info({
-        controller: 'Offer',
-        api: 'findOne',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
       if (status === 200) {
         const getUser = await userModel.findOne({ _id: req.user._id });
-        if (getUser) {
-          if (!getUser.offerCodes.includes(req.params.code)) {
-            return reply.send(Response.generator(200, result));
-          }
+        if (getUser && !getUser.offerCodes.includes(req.params.code)) {
+          return reply.send(
+            Response.generator(200, result, METHODS.FIND_ONE, req.executionTime)
+          );
         }
       }
-      return reply.status(404).send(Response.generator(404));
+      return reply.status(404).send(
+        Response.generator(404, {}, METHODS.FIND_ONE, req.executionTime)
+      );
     } catch (err) {
-      Logger.error({
-        controller: 'Offer',
-        api: 'findOne',
-        isSuccess: false,
-        ip: req.clientIp,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND_ONE, req.executionTime, err)
+      );
     }
   }
 
@@ -111,29 +84,16 @@ export default class Offer extends OfferService {
    * @param {Reply} reply 
    */
   async findOneDashboard(req, reply) {
-    const start = Date.now();
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, OFFER);
       const result = await offerModel.paginate({ ...where, _id: req.params.id }, options);
-      Logger.info({
-        controller: 'Offer',
-        api: 'findOneDashabord',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.send(Response.generator(200, result));
+      return reply.send(
+        Response.generator(200, result, METHODS.FIND_ONE_DASHBOARD, req.executionTime)
+      );
     } catch (err) {
-      Logger.error({
-        controller: 'Offer',
-        api: 'findOneDashabord',
-        isSuccess: false,
-        ip: req.clientIp,
-        message: err.message,
-        time: Date.now() - start
-      });
-      return reply.status(500).send(Response.generator(500, err.message));
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND_ONE_DASHBOARD, req.executionTime, err)
+      );
     }
   }
 
@@ -143,28 +103,15 @@ export default class Offer extends OfferService {
    * @param {Reply} reply 
    */
   async create(req, reply) {
-    const start = Date.now();
     try {
       const result = await offerModel.create({ ...req.body, ownerId: req.user._id });
-      Logger.info({
-        controller: 'Offer',
-        api: 'create',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(200).send(Response.generator(200, result));
+      return reply.status(200).send(
+        Response.generator(200, result, METHODS.CREATE, req.executionTime)
+      );
     } catch (err) {
-      Logger.error({
-        controller: 'Offer',
-        api: 'create',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(500).send(err);
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.CREATE, req.executionTime, err)
+      );
     }
   }
 
@@ -174,36 +121,24 @@ export default class Offer extends OfferService {
    * @param {Reply} reply 
    */
   async update(req, reply) {
-    const start = Date.now();
     try {
       const result = await offerModel.findOneAndUpdate({
         _id: req.params.id,
-        // minishop: req.user.minishop
       },
         { ...req.body, ownerId: req.user._id },
         { new: true }
       );
-      Logger.info({
-        controller: 'Offer',
-        api: 'update',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
       return result ?
-        reply.status(200).send(Response.generator(200, result)) :
-        reply.status(404).send(Response.generator(404));
+        reply.status(200).send(
+          Response.generator(200, result, METHODS.UPDATE, req.executionTime)
+        ) :
+        reply.status(404).send(
+          Response.generator(404, {}, METHODS.UPDATE, req.executionTime)
+        );
     } catch (err) {
-      Logger.error({
-        controller: 'Offer',
-        api: 'update',
-        isSuccess: true,
-        ip: req.clientIp,
-        message: '200',
-        time: Date.now() - start
-      });
-      return reply.status(500).send(err);
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.UPDATE, req.executionTime, err)
+      );
     }
   }
 }
