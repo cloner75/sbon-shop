@@ -5,6 +5,7 @@ const logger = pino({
   level: process.env.LOG_LEVEL || 'info',
 }, pino.destination({
   name: process.env.LOG_NAME || 'spon.user',
+  level: process.env.LOG_LEVEL || 'info',
   dest: 'log.log', // omit for stdout
   sync: false // Asynchronous logging
 }));
