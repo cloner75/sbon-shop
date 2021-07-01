@@ -5,9 +5,14 @@ import UserModel from './../../models/user/user';
 import OfferService from './../../services/product/offer';
 
 // Helpers
-import Response from './../../helpers/response';
+import ResponseGenerator from './../../helpers/response';
 
-
+const Response = new ResponseGenerator('order-service');
+const ORDER = 'order';
+const METHODS = {
+  singleOrderCreate: 'singleOrderCreate',
+  majorOrderCreate: 'majorOrderCreate',
+};
 /**
  * @description :: The Controller service
  *
@@ -52,7 +57,7 @@ export default class OrderService {
         }
       }
       if (!findPrice) {
-        return { status: 404, response: Response.generator(404) };
+        return { status: 404, response: Response.generator(404, {}, METHODS.singleOrderCreate, req.executionTime) };
       }
     }
     if (offerCode) {
@@ -60,7 +65,7 @@ export default class OrderService {
       if (status === 200) {
         let getUser = await UserModel.findById(req.user._id);
         if (!getUser) {
-          return { status: 404, response: Response.generator(404) };
+          return { status: 404, response: Response.generator(404, {}, METHODS.singleOrderCreate, req.executionTime) };
         }
         if (!getUser.offerCodes || !getUser.offerCodes.includes(offerCode)) {
           sum -= result.amount;
@@ -79,7 +84,7 @@ export default class OrderService {
       orderId: Math.floor(Date.now()),
       payment: sum + Number(process.env.POST_PRICE),
     });
-    return { status: 200, response: Response.generator(200, createOrder) };
+    return { status: 200, response: Response.generator(200, createOrder, METHODS.singleOrderCreate, req.executionTime) };
   }
 
   /**
@@ -127,7 +132,7 @@ export default class OrderService {
         }
       }
       if (!findPrice) {
-        return { status: 404, response: Response.generator(404) };
+        return { status: 404, response: Response.generator(404, {}, METHODS.majorOrderCreate, req.executionTime) };
       }
     }
     const createOrder = await OrderModel.create({
@@ -142,8 +147,6 @@ export default class OrderService {
       payment: sum + Number(process.env.POST_PRICE),
       isMajor: true
     });
-    return { status: 200, response: Response.generator(200, createOrder) };
-
-
+    return { status: 200, response: Response.generator(200, createOrder, METHODS.majorOrderCreate, req.executionTime) };
   }
 }
