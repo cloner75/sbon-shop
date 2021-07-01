@@ -63,7 +63,7 @@ export default {
               key: joi.string().trim().required(),
               name: joi.string().trim().required(),
               price: joi.number().required(),
-              vipPrice: joi.number(),
+              major: joi.number(),
               discount: joi.number().required(),
               sbon: joi.number().required(),
               stock: joi.number().required(),
