@@ -9,7 +9,6 @@ import { extend } from 'lodash';
  */
 class Response extends Logger {
   constructor(serviceName) {
-    this.serviceName = serviceName;
     super(serviceName);
 
   }
