@@ -38,7 +38,7 @@ class Logger {
    * @param {object} error 
    */
   error(method, time, error = {}) {
-    Logger.error({
+    logger.error({
       service: this.serviceName,
       isSuccess: false,
       message: error.message,
