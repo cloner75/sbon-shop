@@ -16,6 +16,7 @@ const Comment = new CommentController();
 const Category = new CategoryController();
 const Brand = new BrandController();
 const Offer = new OfferController();
+const Installment = new InstallmentController();
 
 // Midds
 import middle from './../middlewares/product';
@@ -49,6 +50,14 @@ export default (fastify, _opts, done) => {
   fastify.get('/category/get/:id', middle.cat.findOne, Category.findOne);
   fastify.put('/category/update/:id', middle.cat.update, Category.update);
   fastify.delete('/category/remove/:id', middle.cat.delete, Category.remove);
+
+
+  // Installment
+  fastify.get('/installment/get', middle.installment.find, Installment.find);
+  fastify.post('/installment/create', middle.installment.create, Installment.create);
+  fastify.get('/installment/get/:id', middle.installment.findOne, Installment.findOne);
+  fastify.put('/installment/update/:id', middle.installment.update, Installment.update);
+  fastify.delete('/installment/remove/:id', middle.installment.remove, Installment.remove);
 
 
   // Brand
