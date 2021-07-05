@@ -1,9 +1,10 @@
 // Packages
 import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
+
 
 // Helpers
 import CronJobs from './cronjob';
+// import Redis from './redis';
 
 /**
  * @description :: Class For Connection Service
@@ -33,9 +34,9 @@ class Connection {
 
     this.app.addContentTypeParser('*', (_req, done) => done());
     this.app.setErrorHandler((error, _request, reply) => {
-        if (error) {
-            reply.send(error);
-        }
+      if (error) {
+        reply.send(error);
+      }
     });
     this.app.register(require('./../routers/product'), {
       logLevel: process.env.LOG_LEVEL,
@@ -131,6 +132,7 @@ class Connection {
             process.exit(1);
           }
           console.log(`🚀 Server ready at ${address}`);
+          // let cache = new Redis();
           this.database();
           new CronJobs();
         });
