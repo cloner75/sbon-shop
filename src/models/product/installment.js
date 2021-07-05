@@ -9,7 +9,7 @@ set('useCreateIndex', true);
 
 const schema = new Schema(
   {
-    categoryId: { type: ObjectId, required: true },
+    categoryId: { type: Schema.Types.ObjectId, required: true },
     plans: [{
       checkCount: { type: Number, required: true },
       prepayment: { type: Number, required: true },
