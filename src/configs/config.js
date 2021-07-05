@@ -290,6 +290,14 @@ export default {
       'type',
       'status'
     ],
+    installment: [
+      '_id',
+      'categoryId',
+      'createdAt',
+      'updatedAt',
+      'plans',
+      'ownerId'
+    ],
     // option services
     option: [
       '_id',
