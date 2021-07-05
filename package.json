@@ -36,7 +36,7 @@
     "helmet": "^4.4.1",
     "hsts": "^2.2.0",
     "ienoopen": "^1.1.1",
-    "ioredis": "^4.19.2",
+    "ioredis": "^4.27.6",
     "jalali-moment": "^3.3.10",
     "joi": "^17.2.1",
     "json2csv": "^5.0.6",
