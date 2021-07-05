@@ -602,6 +602,99 @@ export default {
         return (data) => schema.validate(data);
       },
     },
+  },
+
+  // Installment
+  installment: {
+    create: {
+      schema: {
+        body: joi
+          .object({
+            categoryId: joi
+              .string()
+              .trim()
+              .pattern(/^[0-9a-fA-F]{24}$/).required(),
+            plans: joi.array().items(
+              joi.object({
+                checkCount: joi.number().required(),
+                prepayment: joi.number().required(),
+                interest: joi.number().required(),
+              })
+            ).required()
+          })
+      }, validatorCompiler: ({ schema }) => {
+        return (data) => schema.validate(data);
+      }
+    },
+
+    find: {
+      schema: {
+        querystring: joi
+          .object({})
+          .unknown(),
+      }, validatorCompiler: ({ schema }) => {
+        return (data) => schema.validate(data);
+      }
+    },
+
+    findOne: {
+      schema: {
+        querystring: joi
+          .object({})
+          .unknown(),
+        params: joi
+          .object({
+            id: joi
+              .string()
+              .trim()
+              .pattern(/^[0-9a-fA-F]{24}$/)
+              .required(),
+          })
+      }, validatorCompiler: ({ schema }) => {
+        return (data) => schema.validate(data);
+      }
+    },
+
+    update: {
+      schema: {
+        body: joi
+          .object({
+            categoryId: joi
+              .string()
+              .trim()
+              .pattern(/^[0-9a-fA-F]{24}$/).required(),
+            plans: joi.array().items(
+              joi.object({
+                checkCount: joi.number().required(),
+                prepayment: joi.number().required(),
+                interest: joi.number().required(),
+              }).unknown()
+            ).required()
+          }),
+        params: joi.object({
+          id: joi
+            .string()
+            .trim()
+            .pattern(/^[0-9a-fA-F]{24}$/).required(),
+        })
+      }, validatorCompiler: ({ schema }) => {
+        return (data) => schema.validate(data);
+      }
+    },
+
+    remove: {
+      schema: {
+        params: joi
+          .object({
+            id: joi
+              .string()
+              .trim()
+              .pattern(/^[0-9a-fA-F]{24}$/).required(),
+          })
+      }, validatorCompiler: ({ schema }) => {
+        return (data) => schema.validate(data);
+      }
+    },
   }
 
 };
