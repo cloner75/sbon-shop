@@ -40,13 +40,16 @@ export default class OrderService {
         for (let skus of getProduct.skus) {
           let sbon = 0;
           if (String(products[index].skusId) === String(skus._id)) {
-            let calculate = (skus[priceField] * products[index].count) - (((skus[priceField] * products[index].count) * skus.discount) / 100);
+            let discountPrice =
+              skus.discount && skus.discount > 0 ?
+                skus.discount : skus[priceField];
+            let calculate = discountPrice * products[index].count;
             sbon = skus.sbon * products[index].count;
             sum += calculate;
             allSbon += sbon;
             Object.assign(products[index], {
               skuId: products[index].skusId,
-              discount: skus.discount,
+              discount: skus[priceField] - skus.discount,
               price: skus[priceField],
               sum: calculate,
               sbon
@@ -112,10 +115,10 @@ export default class OrderService {
                 price: skus[priceField],
               });
             } else {
-              calculate = (skus['price'] * products[index].count) - (((skus['price'] * products[index].count) * skus.discount) / 100);
+              calculate = skus.discount * products[index].count;
               Object.assign(products[index], {
-                discount: skus.discount,
-                price: skus['price'],
+                discount: skus.price - skus.discount,
+                price: skus.discount,
               });
             }
             sbon = skus.sbon * products[index].count;
