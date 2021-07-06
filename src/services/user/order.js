@@ -49,7 +49,7 @@ export default class OrderService {
             allSbon += sbon;
             Object.assign(products[index], {
               skuId: products[index].skusId,
-              discount: skus[priceField] - skus.discount,
+              discount: skus[priceField] - discountPrice,
               price: skus[priceField],
               sum: calculate,
               sbon
@@ -116,9 +116,12 @@ export default class OrderService {
               });
             } else {
               calculate = skus.discount * products[index].count;
+              let discountPrice =
+                skus.discount && skus.discount > 0 ?
+                  skus.discount : skus.price;
               Object.assign(products[index], {
-                discount: skus.price - skus.discount,
-                price: skus.discount,
+                discount: discountPrice - skus.discount,
+                price: discountPrice,
               });
             }
             sbon = skus.sbon * products[index].count;
