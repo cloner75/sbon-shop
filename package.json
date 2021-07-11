@@ -7,6 +7,7 @@
     "test": "mocha",
     "build": "babel src -d build",
     "start:dev": "yarn build && NODE_ENV=development node build/index.js",
+    "start:watch":"nodemon --exec  'yarn start:dev' --ignore ./build/",
     "start": "pm2 start build/index.js -i 2 --name 'backend-sbon'",
     "pretest": "eslint --ignore-path .gitignore .",
     "doc": "./node_modules/.bin/jsdoc ./src/controllers/"
