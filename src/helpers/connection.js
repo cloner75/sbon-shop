@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 // Helpers
 import CronJobs from './cronjob';
-// import Redis from './redis';
+import Redis from './redis';
 
 /**
  * @description :: Class For Connection Service
@@ -120,6 +120,23 @@ class Connection {
   }
 
   /**
+   * @description :: Connection Redis For Cache
+   */
+  Cache() {
+    switch (process.env.NODE_ENV) {
+      case 'development':
+        new Redis();
+        break;
+      case 'production':
+        if (process.env.REDIS_HOST && process.env.REDIS_PORT) {
+          new Redis();
+        }
+        break;
+    }
+
+  }
+
+  /**
    * @description :: Start Server
    * @param {class} app
    */
@@ -131,10 +148,10 @@ class Connection {
             console.error(err);
             process.exit(1);
           }
-          console.log(`🚀 Server ready at ${address}`);
-          // let cache = new Redis();
+          this.Cache();
           this.database();
           new CronJobs();
+          console.log(`🚀 Server ready at ${address}`);
         });
       });
   }
