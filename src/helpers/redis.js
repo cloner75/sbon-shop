@@ -1,29 +1,45 @@
 import RedisDatabase from 'ioredis';
 
 const MODELS = {
-  minishop: 0,
-  template: 1,
-  user: 2,
-  product: 3,
-  category: 4,
+  minishop: {
+    index: 0,
+    prefix: 'minishops.'
+  },
+  template: {
+    index: 1,
+    prefix: 'templates.'
+  },
+  user: {
+    index: 2,
+    prefix: 'users.'
+  },
+  product: {
+    index: 3,
+    prefix: 'products.'
+  },
+  category: {
+    index: 4,
+    prefix: 'categorys.'
+  },
 };
-const DEFAULT_CONF = {
-  port: 6379,
-  host: "127.0.0.1",
-};
+
 let dbs = null;
 
 class Redis {
   constructor() {
+    this.default_conf = {
+      port: Number(process.env.REDIS_PORT),
+      host: process.env.REDIS_HOST,
+    };
     if (!dbs) {
       dbs = {
-        minishop: new RedisDatabase({ ...DEFAULT_CONF, db: 0 }),
-        template: new RedisDatabase({ ...DEFAULT_CONF, db: 1 }),
-        user: new RedisDatabase({ ...DEFAULT_CONF, db: 2 }),
-        product: new RedisDatabase({ ...DEFAULT_CONF, db: 3 }),
-        category: new RedisDatabase({ ...DEFAULT_CONF, db: 4 }),
+        minishop: new RedisDatabase({ ...this.default_conf, db: 0 }),
+        template: new RedisDatabase({ ...this.default_conf, db: 1 }),
+        user: new RedisDatabase({ ...this.default_conf, db: 2 }),
+        product: new RedisDatabase({ ...this.default_conf, db: 3 }),
+        category: new RedisDatabase({ ...this.default_conf, db: 4 }),
       };
-      console.info('🚀 Redis ready at :', DEFAULT_CONF.port);
+      console.info('🚀 Redis ready at :', this.default_conf.port);
     }
   }
 
@@ -34,9 +50,9 @@ class Redis {
    */
   model(name) {
     return {
-      set: async (key, value) => await this.set(dbs[name], key, value),
-      get: async (key) => await this.get(dbs[name], key),
-      remove: async (key) => await this.remove(dbs[name], key),
+      set: async (key, value) => await this.set(dbs[name], MODELS[name].prefix, key, value),
+      get: async (key) => await this.get(dbs[name], MODELS[name].prefix, key),
+      remove: async (key) => await this.remove(dbs[name], MODELS[name].prefix, key),
     };
   }
 
@@ -47,9 +63,9 @@ class Redis {
    * @param {pbject} value 
    * @returns 
    */
-  async set(model, key, value) {
+  async set(model, prefix, key, value) {
     try {
-      return await model.set(key, JSON.stringify(value));
+      return await model.hmset(prefix.concat(key), { value: JSON.stringify(value) });
     } catch (err) {
       throw new Error(err);
     }
@@ -61,9 +77,9 @@ class Redis {
    * @param {string} key 
    * @returns 
    */
-  async get(model, key) {
+  async get(model, prefix, key) {
     try {
-      const result = await model.get(key);
+      const result = await model.hget(prefix.concat(key), 'value');
       return result ? JSON.parse(result) : false;
     } catch (err) {
       throw new Error(err);
@@ -76,9 +92,9 @@ class Redis {
    * @param {string} key 
    * @returns 
    */
-  async remove(model, key) {
+  async remove(model, prefix, key) {
     try {
-      return await model.del(key);
+      return await model.del(prefix.concat(key), 'value');
     } catch (err) {
       throw new Error(err);
     }
