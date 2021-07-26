@@ -72,8 +72,10 @@ class Connection {
       logLevel: process.env.LOG_LEVEL,
       prefix: '/pay'
     });
-
-
+    this.app.register(require('../routers/seo'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/api/v1/seo'
+    });
 
     return this.app;
   }
