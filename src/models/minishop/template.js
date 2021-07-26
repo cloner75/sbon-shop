@@ -38,12 +38,12 @@ const schema = new Schema(
 schema.plugin(paginate);
 schema.plugin(timestamp);
 
-const modelSchema = model('minishops', schema);
+const modelSchema = model('templates', schema);
 
 // Index fields
 modelSchema.ensureIndexes((err) => {
   if (err) {
-    console.error('option model error :', err.message);
+    console.error('templates model error :', err.message);
   }
 });
 
