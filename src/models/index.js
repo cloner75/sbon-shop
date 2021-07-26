@@ -14,6 +14,10 @@ import list from './user/list';
 import order from './user/order';
 import wallet from './user/wallet';
 
+// ceo 
+import meta from './ceo/meta';
+import redirect from './ceo/redirect';
+
 export default {
   // cache
   user,
@@ -30,4 +34,7 @@ export default {
   list,
   order,
   wallet,
+  // ceo
+  meta,
+  redirect
 };
