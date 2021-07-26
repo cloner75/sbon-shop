@@ -142,7 +142,7 @@ export default {
     isAuth: true,
     name: 'offer-update'
   },
-  
+
   /**
    * @discription [option service]
    */
@@ -366,9 +366,9 @@ export default {
     isAuth: true,
     name: 'redirect-update'
   },
-  '/api/v1/seo/meta/remove/:id': {
+  '/api/v1/seo/redirect/remove/:id': {
     method: 'POST',
     isAuth: true,
-    name: 'meta-remove'
+    name: 'redirect-remove'
   },
 };
