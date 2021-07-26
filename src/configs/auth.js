@@ -311,5 +311,64 @@ export default {
     method: 'PUT',
     isAuth: true,
     name: 'order-cancel'
-  }
+  },
+  /** CEO */
+  // meta
+  '/api/v1/seo/meta/find': {
+    method: 'GET',
+    isAuth: false,
+    name: 'meta-get-page'
+  },
+  '/api/v1/seo/meta/find/:id': {
+    method: 'GET',
+    isAuth: false,
+    name: 'meta-get-id'
+  },
+  '/api/v1/seo/meta/superadmin/find': {
+    method: 'GET',
+    isAuth: true,
+    name: 'meta-superadmin-get'
+  },
+  '/api/v1/seo/meta/create': {
+    method: 'POST',
+    isAuth: true,
+    name: 'meta-create'
+  },
+  '/api/v1/seo/meta/update/:id': {
+    method: 'POST',
+    isAuth: true,
+    name: 'meta-update'
+  },
+  '/api/v1/seo/meta/remove/:id': {
+    method: 'POST',
+    isAuth: true,
+    name: 'meta-remove'
+  },
+
+  // redirect
+  '/api/v1/seo/redirect/find': {
+    method: 'GET',
+    isAuth: false,
+    name: 'redirect-get'
+  },
+  '/api/v1/seo/redirect/find/:id': {
+    method: 'GET',
+    isAuth: false,
+    name: 'redirect-get-id'
+  },
+  '/api/v1/seo/redirect/create': {
+    method: 'POST',
+    isAuth: true,
+    name: 'redirect-create'
+  },
+  '/api/v1/seo/redirect/update/:id': {
+    method: 'POST',
+    isAuth: true,
+    name: 'redirect-update'
+  },
+  '/api/v1/seo/meta/remove/:id': {
+    method: 'POST',
+    isAuth: true,
+    name: 'meta-remove'
+  },
 };
