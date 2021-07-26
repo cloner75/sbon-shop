@@ -3,30 +3,38 @@ import RedisDatabase from 'ioredis';
 const MODELS = {
   minishop: {
     index: 0,
-    prefix: 'minishops.'
+    prefix: 'minishops:'
   },
   template: {
     index: 1,
-    prefix: 'templates.'
+    prefix: 'templates:'
   },
   user: {
     index: 2,
-    prefix: 'users.'
+    prefix: 'users:'
   },
   product: {
     index: 3,
-    prefix: 'products.'
+    prefix: 'products:'
   },
   category: {
     index: 4,
-    prefix: 'categorys.'
+    prefix: 'categorys:'
+  },
+  brand: {
+    index: 5,
+    prefix: 'brands:'
+  },
+  opiton: {
+    index: 6,
+    prefix: 'opitons:'
   },
 };
 
 let dbs = null;
 
 class Redis {
-  constructor() {
+  constructor(index = null) {
     this.default_conf = {
       port: Number(process.env.REDIS_PORT),
       host: process.env.REDIS_HOST,
@@ -38,9 +46,19 @@ class Redis {
         user: new RedisDatabase({ ...this.default_conf, db: 2 }),
         product: new RedisDatabase({ ...this.default_conf, db: 3 }),
         category: new RedisDatabase({ ...this.default_conf, db: 4 }),
+        brand: new RedisDatabase({ ...this.default_conf, db: 5 }),
+        option: new RedisDatabase({ ...this.default_conf, db: 6 }),
       };
+      if (index) {
+        dbs.instance = new RedisDatabase({ ...this.default_conf, db: index });
+      }
       console.info('🚀 Redis ready at :', this.default_conf.port);
     }
+  }
+
+  getInstance(name) {
+    console.log(Object.keys(dbs));
+    return dbs[name];
   }
 
   /**
@@ -49,11 +67,12 @@ class Redis {
    * @returns 
    */
   model(name) {
-    return {
+    return (dbs[name]) ? {
       set: async (key, value) => await this.set(dbs[name], MODELS[name].prefix, key, value),
       get: async (key) => await this.get(dbs[name], MODELS[name].prefix, key),
+      getOne: async (key) => await this.getOne(dbs[name], MODELS[name].prefix, key),
       remove: async (key) => await this.remove(dbs[name], MODELS[name].prefix, key),
-    };
+    } : null;
   }
 
   /**
@@ -78,6 +97,21 @@ class Redis {
    * @returns 
    */
   async get(model, prefix, key) {
+    try {
+      const result = await model.hget(prefix.concat(key), 'value');
+      return result ? JSON.parse(result) : false;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  /**
+  * @description :: get one key
+  * @param {string} model 
+  * @param {string} key 
+  * @returns 
+  */
+  async getOne(model, prefix, key) {
     try {
       const result = await model.hget(prefix.concat(key), 'value');
       return result ? JSON.parse(result) : false;
