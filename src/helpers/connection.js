@@ -39,6 +39,11 @@ class Connection {
         reply.send(error);
       }
     });
+
+    this.app.get('/redirect', (req, reply) => {
+      return reply.redirect(+req.query.code, req.query.url);
+    });
+
     this.app.register(require('./../routers/product'), {
       logLevel: process.env.LOG_LEVEL,
       prefix: '/api/v1/product'
