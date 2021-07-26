@@ -34,7 +34,7 @@ const modelSchema = model('minishops', schema);
 // Index fields
 modelSchema.ensureIndexes((err) => {
   if (err) {
-    console.error('option model error :', err.message);
+    console.error('minishops model error :', err.message);
   }
 });
 
