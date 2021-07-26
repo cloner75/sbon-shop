@@ -77,7 +77,14 @@ class Authorization {
       .execute('order-superadmin-get').on('GET')
       .execute('superadmin-get-one-user').on('GET')
       .execute('superadmin-profile-update').on('PUT')
-      .execute('superadmin-bio-update').on('PUT');
+      .execute('superadmin-bio-update').on('PUT')
+      .execute('redirect-create').on('POST')
+      .execute('redirect-update').on('PUT')
+      .execute('redirect-remove').on('DELETE')
+      .execute('meta-create').on('POST')
+      .execute('meta-remove').on('DELETE')
+      .execute('meta-update').on('PUT')
+      .execute('meta-superadmin-get').on('GET');
 
     return AC;
   }
