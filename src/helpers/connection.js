@@ -31,6 +31,7 @@ class Connection {
     this.app.use(require('hsts')());
     this.app.use(require('ienoopen')());
     this.app.use(require('x-xss-protection')());
+    this.app.use(require('express-device').capture());
 
     this.app.addContentTypeParser('*', (_req, done) => done());
     this.app.setErrorHandler((error, _request, reply) => {
@@ -73,8 +74,8 @@ class Connection {
   }
 
   /**
-   * @description :: Connect To Mongodb
-   */
+  * @description :: Connect To Mongodb
+  */
   database() {
     const {
       MONGO_HOST,
