@@ -345,6 +345,10 @@ export default {
       'createdAt',
     ],
 
+    // ceo
+    meta: ['_id', 'createdAt', 'updatedAt', 'page', 'metas'],
+    redirect: ['_id', 'createdAt', 'updatedAt', 'page', 'target', 'code'],
+
     // minishop Services
     template: [
       '_id',
