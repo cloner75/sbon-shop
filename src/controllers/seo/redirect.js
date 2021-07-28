@@ -1,7 +1,7 @@
 // Packages
 
 // Models
-import { redirect as RedirectModel } from './../../models';
+import Models from './../../models';
 
 // Helpers
 import MongoHelper from './../../helpers/mongo';
@@ -34,7 +34,7 @@ export default class RedirectController {
    */
   async create(req, reply) {
     try {
-      const createOption = await RedirectModel.create({
+      const createOption = await Models.redirect.create({
         userId: req.user._id,
         ...req.body
       });
@@ -56,7 +56,7 @@ export default class RedirectController {
   async find(req, reply) {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, REDIRECT);
-      const result = await RedirectModel.paginate(where, options);
+      const result = await Models.redirect.paginate(where, options);
       return reply.status(200).send(
         Response.generator(200,
           result.docs,
@@ -79,7 +79,7 @@ export default class RedirectController {
   async findOne(req, reply) {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, REDIRECT);
-      const result = await RedirectModel.paginate({
+      const result = await Models.redirect.paginate({
         _id: req.params.id,
         ...where
       }, options);
@@ -104,7 +104,7 @@ export default class RedirectController {
    */
   async update(req, reply) {
     try {
-      const update = await RedirectModel.findOneAndUpdate(
+      const update = await Models.redirect.findOneAndUpdate(
         {
           _id: req.params.id
         },
@@ -134,7 +134,7 @@ export default class RedirectController {
    */
   async remove(req, reply) {
     try {
-      const remove = await RedirectModel.deleteOne(
+      const remove = await Models.redirect.deleteOne(
         { _id: req.params.id },
       );
       return remove.n ?
