@@ -1,5 +1,5 @@
 // Models
-import { meta as MetaModel } from './../../models';
+import Models from './../../models/index';
 
 // Helpers
 import MongoHelper from './../../helpers/mongo';
@@ -33,7 +33,7 @@ export default class MetaController {
    */
   async create(req, reply) {
     try {
-      const createMeta = await MetaModel.create({
+      const createMeta = await Models.meta.create({
         userId: req.user._id,
         ...req.body
       });
@@ -55,7 +55,7 @@ export default class MetaController {
   async findAdmin(req, reply) {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, META);
-      const result = await MetaModel.paginate(where, options);
+      const result = await Models.meta.paginate(where, options);
       return reply.status(200).send(
         Response.generator(200,
           result.docs,
@@ -78,7 +78,7 @@ export default class MetaController {
   async findOneById(req, reply) {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, META);
-      const result = await MetaModel.paginate({
+      const result = await Models.meta.paginate({
         _id: req.params.id,
         ...where
       }, options);
@@ -104,7 +104,7 @@ export default class MetaController {
   async findOneByName(req, reply) {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, META);
-      const result = await MetaModel.paginate({
+      const result = await Models.meta.paginate({
         page: req.query.page,
         ...where
       }, options);
@@ -116,6 +116,7 @@ export default class MetaController {
           Response.generator(404, {}, METHODS.FIND_ONE, req.executionTime)
         );
     } catch (err) {
+      // console.log(err);
       return reply.status(500).send(
         Response.ErrorHandler(METHODS.FIND_ONE, req.executionTime, err)
       );
@@ -129,7 +130,7 @@ export default class MetaController {
    */
   async update(req, reply) {
     try {
-      const update = await MetaModel.findOneAndUpdate(
+      const update = await Models.meta.findOneAndUpdate(
         {
           _id: req.params.id
         },
@@ -159,7 +160,7 @@ export default class MetaController {
    */
   async remove(req, reply) {
     try {
-      const remove = await MetaModel.deleteOne(
+      const remove = await Models.meta.deleteOne(
         { _id: req.params.id },
       );
       return remove.n ?
