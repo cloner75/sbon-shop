@@ -335,12 +335,12 @@ export default {
     name: 'meta-create'
   },
   '/api/v1/seo/meta/update/:id': {
-    method: 'POST',
+    method: 'PUT',
     isAuth: true,
     name: 'meta-update'
   },
   '/api/v1/seo/meta/remove/:id': {
-    method: 'POST',
+    method: 'DELETE',
     isAuth: true,
     name: 'meta-remove'
   },
@@ -362,12 +362,12 @@ export default {
     name: 'redirect-create'
   },
   '/api/v1/seo/redirect/update/:id': {
-    method: 'POST',
+    method: 'PUT',
     isAuth: true,
     name: 'redirect-update'
   },
   '/api/v1/seo/redirect/remove/:id': {
-    method: 'POST',
+    method: 'DELETE',
     isAuth: true,
     name: 'redirect-remove'
   },
