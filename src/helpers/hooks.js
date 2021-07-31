@@ -2,12 +2,13 @@
 import logger from './logger';
 import JWT from './jsonwebtoken';
 import Auth from './authorization';
-import Response from './response';
+import ResponseGenerator from './response';
 
 // Config
 import authConfig from './../configs/auth';
 
 // Consts
+const Response = new ResponseGenerator('hooks-service');
 const AC = new Auth();
 const jwt = new JWT();
 const role = AC.defineRoles();
@@ -40,14 +41,33 @@ class Hooks {
             .execute(authConfig[req.routerPath].name)
             .on(authConfig[req.routerPath].method);
           if (!permission.granted) {
-            return reply.status(403).send(Response.generator(403));
+            return reply.status(403).send(
+              Response.generator(
+                403,
+                {},
+                'authorization',
+                req.executionTime
+              ));
           }
         } else {
-          return reply.status(401).send(Response.generator(401));
+          return reply.status(401).send(
+            Response.generator(
+              401,
+              {},
+              'authorization',
+              req.executionTime
+            ));
         }
       }
     } catch (err) {
-      return reply.status(403).send(Response.generator(403, err.message));
+      return reply.status(403).send(
+        Response.generator(
+          403,
+          { message: err.message },
+          'authorization',
+          req.executionTime
+        )
+      );
     }
   };
 }
