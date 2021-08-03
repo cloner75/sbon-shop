@@ -34,9 +34,12 @@ export default class RedirectController {
    */
   async create(req, reply) {
     try {
+      const { page, target, code } = req.body;
       const createOption = await Models.redirect.create({
         userId: req.user._id,
-        ...req.body
+        page,
+        target,
+        code,
       });
       return reply.status(201).send(
         Response.generator(201, createOption, METHODS.CREATE, req.executionTime)
@@ -56,10 +59,10 @@ export default class RedirectController {
   async find(req, reply) {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, REDIRECT);
-      const result = await Models.redirect.paginate(where, options);
+      const url = await Models.redirect.findOne({ page: req.query.page });
       return reply.status(200).send(
         Response.generator(200,
-          result.docs,
+          url,
           METHODS.FIND,
           req.executionTime
         )
