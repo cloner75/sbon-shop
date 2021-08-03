@@ -1,11 +1,12 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, SchemaTypes } from 'mongoose';
 import timestamp from 'mongoose-timestamp';
 import paginate from 'mongoose-paginate';
+require('mongoose-type-url');
 
 // define schema
 const schema = new Schema({
-  page: { type: String, required: true, index: true },
-  target: { type: String, required: true },
+  page: { type: SchemaTypes.Url, required: true, index: true },
+  target: { type: SchemaTypes.Url, required: true },
   code: { type: Number, required: true }
 });
 
