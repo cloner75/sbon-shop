@@ -351,6 +351,11 @@ export default {
     isAuth: false,
     name: 'redirect-get'
   },
+  '/api/v1/seo/redirect/superadmin/find': {
+    method: 'GET',
+    isAuth: true,
+    name: 'redirect-get-superadmin'
+  },
   '/api/v1/seo/redirect/find/:id': {
     method: 'GET',
     isAuth: false,
