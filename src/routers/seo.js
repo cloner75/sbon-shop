@@ -26,6 +26,7 @@ export default (fastify, _opts, done) => {
 
   // Redirect Routes
   fastify.get('/redirect/find', Redirect.find);
+  fastify.get('/redirect/superadmin/find', Redirect.superadminFind);
   fastify.get('/redirect/find/:id', Redirect.findOne);
   fastify.post('/redirect/create', Redirect.create);
   fastify.put('/redirect/update/:id', Redirect.update);
