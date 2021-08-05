@@ -81,6 +81,7 @@ class Authorization {
       .execute('redirect-create').on('POST')
       .execute('redirect-update').on('PUT')
       .execute('redirect-remove').on('DELETE')
+      .execute('redirect-get-superadmin').on('GET')
       .execute('meta-create').on('POST')
       .execute('meta-remove').on('DELETE')
       .execute('meta-update').on('PUT')
