@@ -15,6 +15,7 @@ const METHODS = {
   CREATE: 'create',
   FIND: 'find',
   FIND_ONE: 'find-one',
+  FIND_SUPER_ADMIN:'find-super-admin',
   REMOVE: 'remove',
   UPDATE: 'update',
 };
@@ -72,6 +73,26 @@ export default class RedirectController {
         );
     } catch (err) {
       // console.log(err);
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND_ONE, req.executionTime, err)
+      );
+    }
+  }
+
+
+  /**
+  * @description :: Get One Document
+  * @param {request} req 
+  * @param {Reply} reply 
+  */
+  async superadminFind(req, reply) {
+    try {
+      const { where, options } = MongoHelper.initialMongoQuery(req.query, REDIRECT);
+      const result = await Models.redirect.paginate({ ...where }, options);
+      return reply.status(200).send(
+        Response.generator(200, result.docs, METHODS.FIND_SUPER_ADMIN, req.executionTime)
+      );
+    } catch (err) {
       return reply.status(500).send(
         Response.ErrorHandler(METHODS.FIND_ONE, req.executionTime, err)
       );
