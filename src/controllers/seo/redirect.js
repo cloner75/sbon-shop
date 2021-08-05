@@ -59,17 +59,21 @@ export default class RedirectController {
   async find(req, reply) {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, REDIRECT);
-      const url = await Models.redirect.findOne({ page: req.query.page });
-      return reply.status(200).send(
-        Response.generator(200,
-          url,
-          METHODS.FIND,
-          req.executionTime
-        )
-      );
+      const result = await Models.redirect.paginate({
+        page: req.query.page,
+        ...where
+      }, options);
+      return result.docs[0] ?
+        reply.status(200).send(
+          Response.generator(200, result.docs[0], METHODS.FIND_ONE, req.executionTime)
+        ) :
+        reply.status(404).send(
+          Response.generator(404, {}, METHODS.FIND_ONE, req.executionTime)
+        );
     } catch (err) {
+      // console.log(err);
       return reply.status(500).send(
-        Response.ErrorHandler(METHODS.FIND, req.executionTime, err)
+        Response.ErrorHandler(METHODS.FIND_ONE, req.executionTime, err)
       );
     }
   }
