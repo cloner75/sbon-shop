@@ -127,6 +127,20 @@ class Connection {
     }
   }
 
+  globalErrorHandler() {
+    process.on('unhandledRejection', (reason, promise) => {
+      console.log('unhandledRejection');
+    });
+
+    process.on('rejectionHandled', (promise) => {
+      console.log('rejectionHandled');
+    });
+
+    process.on('uncaughtException', (err, origin) => {
+      console.log('uncaughtException');
+    });
+  }
+
   /**
    * @description :: Connection Redis For Cache
    */
