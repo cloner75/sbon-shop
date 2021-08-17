@@ -12,6 +12,7 @@ const PRODUCT = 'product';
 const METHODS = {
   CREATE: 'create',
   FIND: 'find',
+  FIND_EMALLS: 'find-emalls',
   SEARCH: 'search',
   FIND_ONE: 'find-one',
   REMOVE: 'remove',
@@ -50,6 +51,42 @@ export default class Product {
     }
   }
 
+  /**
+   * @description :: Get Documents For Emails Service
+   * @param {request} req 
+   * @param {Reply} reply 
+   */
+  async findEmalls(req, reply) {
+    try {
+      const { options } = MongoHelper.initialMongoQuery(req.query, PRODUCT);
+      const where = {
+        status: { $ne: 4 },
+        'skus.default': true
+      };
+      const selectFields = '_id titleFa skus._id skus.default skus.price skus.stock skus.discount slug';
+      const result = await ProductModel.paginate(where, {
+        options,
+        select: selectFields
+      });
+      const products = result.docs.map(item => {
+        return {
+          id: item.skus._id,
+          title: item.titleFa,
+          url: `/product/${item._id}/${item.slug}`,
+          price: item.skus[0].price,
+          old_price: item.skus[0].discount || null,
+          is_available: item.skus[0].stock > 0 ? true : false,
+        };
+      });
+      return reply.send(
+        Response.generator(200, products, METHODS.FIND_EMALLS, req.executionTime)
+      );
+    } catch (err) {
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.FIND_EMALLS, req.executionTime, err)
+      );
+    }
+  }
   /**
   * @description :: Search Documents
   * @param {request} req 
