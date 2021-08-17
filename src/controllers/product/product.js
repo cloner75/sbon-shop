@@ -62,7 +62,6 @@ export default class Product {
       switch (type) {
         case 2:
           searchBox = {
-            status: { $ne: 4 },
             'skus.price': {
               $gte: (priceMin - ((priceMin * 5) / 100)) || 0,
               $lte: (priceMax + ((priceMax * 5) / 100)) || 50000000000,
@@ -98,6 +97,7 @@ export default class Product {
           });
           break;
       }
+      Object.assign(searchBox, { status: { $ne: 4 } });
       const { options } = MongoHelper.initialMongoQuery(req.query, PRODUCT);
       const result = await ProductModel.paginate(searchBox, options);
       return reply.send(
