@@ -15,7 +15,7 @@ import Transaction from './../../helpers/transaction';
 
 // Configs
 import configs from './../../configs/config';
-
+import cookieConfig from './../../configs/cookie';
 
 // Consts
 const Response = new ResponseGenerator('user-service');
@@ -57,7 +57,6 @@ export default class UserController {
    * @param {Response} reply 
    */
   async hotpSend(req, reply) {
-
     try {
       const { phone } = req.body;
       const checkUnique = await UserModel.findOne({ phone });
@@ -144,11 +143,19 @@ export default class UserController {
             action: 'ثبت نام',
           }]
         });
-        return reply.send(Response.generator(200,
-          { ...result, token: await jwt.generate(result) },
-          METHODS.register, req.executionTime
-        )
-        );
+        const resultToken = await jwt.generate(result);
+        return reply
+          .setCookie(
+            'access_token',
+            resultToken,
+            cookieConfig
+          )
+          .send(
+            Response.generator(200,
+              { ...result, token: resultToken },
+              METHODS.register, req.executionTime
+            )
+          );
       }
       return reply.status(404).send(Response.generator(404, {}, METHODS.register, req.executionTime));
     } catch (err) {
@@ -168,12 +175,20 @@ export default class UserController {
       if (getUser) {
         const { password, phone, locations, ...result } = getUser.toObject();
         const checkPassword = bcrypt.compareSync(passwordInput, password);
+        const resultToken = await jwt.generate(result);
         if (checkPassword) {
-          return reply.send(Response.generator(200,
-            { token: await jwt.generate(result) },
-            METHODS.login, req.executionTime
-          )
-          );
+          return reply
+            .setCookie(
+              'access_token',
+              resultToken,
+              cookieConfig
+            )
+            .send(
+              Response.generator(200,
+                { token: resultToken },
+                METHODS.login, req.executionTime
+              )
+            );
         }
       }
       return reply.status(404).send(Response.generator(404, {}, METHODS.login, req.executionTime));
@@ -199,7 +214,7 @@ export default class UserController {
         )
       );
     } catch (err) {
-      if (err.message === 'jwt expired') {
+      if (/jwt expired/.test(err.message)) {
         const decode = jwt.decode(token);
         const getUser = await UserModel.findById(decode._id);
         if (!getUser) {
