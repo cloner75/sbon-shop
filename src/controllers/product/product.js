@@ -65,7 +65,7 @@ export default class Product {
       };
       const selectFields = '_id titleFa skus._id skus.default skus.price skus.stock skus.discount slug';
       const result = await ProductModel.paginate(where, {
-        options,
+        ...options,
         select: selectFields
       });
       const products = result.docs.map(item => {
@@ -79,7 +79,7 @@ export default class Product {
         };
       });
       return reply.send(
-        Response.generator(200, products, METHODS.FIND_EMALLS, req.executionTime)
+        Response.generator(200, { products, totla: result.totla }, METHODS.FIND_EMALLS, req.executionTime)
       );
     } catch (err) {
       return reply.status(500).send(
