@@ -1,7 +1,6 @@
 // Packages
 import mongoose from 'mongoose';
 
-
 // Helpers
 import CronJobs from './cronjob';
 import Redis from './redis';
@@ -23,8 +22,10 @@ class Connection {
    * @description :: Setting And Router
    */
   async settings() {
-
     await this.app.register(require('fastify-express'));
+    this.app.register(require('fastify-cookie'), {
+      secret: process.env.SECRET_JWT,
+    });
     this.app.use(require('cors')());
     this.app.use(require('dns-prefetch-control')());
     this.app.use(require('frameguard')());
@@ -32,7 +33,7 @@ class Connection {
     this.app.use(require('ienoopen')());
     this.app.use(require('x-xss-protection')());
     this.app.use(require('express-device').capture());
-
+    // this.app.use(require('cookie-parser')());
     this.app.addContentTypeParser('*', (_req, done) => done());
     this.app.setErrorHandler((error, _request, reply) => {
       if (error) {
@@ -127,6 +128,9 @@ class Connection {
     }
   }
 
+  /**
+   * @description :: error handler 
+   */
   globalErrorHandler() {
     process.on('unhandledRejection', (reason, promise) => {
       console.log('unhandledRejection');
