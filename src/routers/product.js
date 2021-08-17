@@ -30,6 +30,7 @@ export default (fastify, _opts, done) => {
 
   // Product
   fastify.get('/get', middle.pro.find, Product.find);
+  fastify.get('/get/emalls', middle.pro.find, Product.findEmalls);
   fastify.get('/search', middle.pro.search, Product.search);
   fastify.get('/get/:id', middle.pro.findOne, Product.findOne);
   fastify.post('/create', middle.pro.create, Product.create);
