@@ -1,9 +1,11 @@
 // Packages
 import mongoose from 'mongoose';
+import fs from 'fs';
 
 // Helpers
 import CronJobs from './cronjob';
 import Redis from './redis';
+
 
 /**
  * @description :: Class For Connection Service
@@ -76,6 +78,14 @@ class Connection {
     this.app.register(require('../routers/seo'), {
       logLevel: process.env.LOG_LEVEL,
       prefix: '/api/v1/seo'
+    });
+
+    this.app.get('/sitemap.xml', (req, reply) => {
+      fs.readFile(`./sitemap.xml`, (_err, fileBuffer) => {
+        reply
+          .header('Content-Type', `application/xml`)
+          .send(fileBuffer);
+      });
     });
 
     return this.app;
