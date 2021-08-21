@@ -79,7 +79,7 @@ export default class Product {
         };
       });
       return reply.send(
-        Response.generator(200, { products, totla: result.totla }, METHODS.FIND_EMALLS, req.executionTime)
+        Response.generator(200, { products, total: result.total }, METHODS.FIND_EMALLS, req.executionTime)
       );
     } catch (err) {
       return reply.status(500).send(
