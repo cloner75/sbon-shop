@@ -57,7 +57,7 @@ class CronJobs {
             loc: item.slug,
             url: item.slug,
             lastmod: item.updatedAt,
-            priority: 0.5
+            priority: 1
           });
         });
 
