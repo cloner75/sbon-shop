@@ -47,7 +47,7 @@ class CronJobs {
    */
   generateSiteMap() {
     try {
-      const job = new CronJob('* 5 * * * *', async function () {
+      const job = new CronJob('10 * * * * *', async function () {
         const getAllProducts = await ProductModel.find({ status: { $ne: 4 } });
         const sitemap = new SitemapStream({ hostname: 'http://sbon.ir/' });
         const writeStream = createWriteStream('./sitemap.xml');
@@ -55,7 +55,7 @@ class CronJobs {
         getAllProducts.map(item => {
           sitemap.write({
             loc: item.slug,
-            url: item.slug,
+            url: `/product/${item._id}/${item.slug}`,
             lastmod: item.updatedAt,
             priority: 1
           });
