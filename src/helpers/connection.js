@@ -79,6 +79,10 @@ class Connection {
       logLevel: process.env.LOG_LEVEL,
       prefix: '/api/v1/seo'
     });
+    this.app.register(require('../routers/mrLottory'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/api/v1/mrlottory'
+    });
 
     this.app.get('/sitemap.xml', (req, reply) => {
       fs.readFile(`./sitemap.xml`, (_err, fileBuffer) => {
