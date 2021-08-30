@@ -376,4 +376,13 @@ export default {
     isAuth: true,
     name: 'redirect-remove'
   },
+
+  /**
+   * @description [mrLottory service]
+   */
+   '/api/v1/mrlottory/create': {
+    method: 'POST',
+    isAuth: true,
+    name: 'mrlottory-create'
+  },
 };
