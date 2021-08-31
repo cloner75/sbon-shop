@@ -31,13 +31,15 @@ export default class MrLottoryController {
    */
   async createUser(req, reply) {
     try {
-      const orderId = Date.now();
+      let orderId = await MrLottroyUserModel.count();
+      orderId += 10000010;
       const createOption = await MrLottroyUserModel.create({
         userId: req.user._id,
         ...req.body,
         status: 0,
         orderId
       });
+      console.log({ createOption });
       strongSoap.soap.createClient(process.env.IPG_GET_TOKEN, { }, async (_, client) => {
         const { result } = await client.SalePaymentRequest({
           requestData: {
