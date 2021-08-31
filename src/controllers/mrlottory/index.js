@@ -60,11 +60,12 @@ export default class MrLottoryController {
             }
           });
           return reply.status(201).send(
-            Response.generator(201, {
-              ...createOption,
-              token: result.SalePaymentRequestResult.Token,
-              address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
-            }, METHODS.CREATE, req.executionTime)
+            Response.generator(201,
+              Object.assign(createOption, {
+                token: result.SalePaymentRequestResult.Token,
+                address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
+              }),
+              METHODS.CREATE, req.executionTime)
           );
         }
       });
