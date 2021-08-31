@@ -35,6 +35,7 @@ const schema = new Schema(
     status: { type: Number, required: false, default: 0 },// 0 => not Pay , 1 => Payeid
     userId: { type: Schema.Types.ObjectId, required: false },
     orderId: { type: String, rqeuired: false },
+    RRN: { type: String, rqeuired: false },
     token: { type: String, rqeuired: false },
   },
   {
