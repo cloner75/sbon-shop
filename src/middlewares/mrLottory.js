@@ -54,4 +54,16 @@ export default {
       return (data) => schema.validate(data);
     },
   },
+  // @description ::  Schema Create
+  verify: {
+    schema: {
+      body: joi
+        .object({
+          orderId: joi.string().trim().required().messages(messages),
+        })
+    },
+    validatorCompiler: ({ schema }) => {
+      return (data) => schema.validate(data);
+    },
+  },
 };
