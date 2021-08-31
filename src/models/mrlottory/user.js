@@ -47,7 +47,7 @@ const schema = new Schema(
 schema.plugin(paginate);
 schema.plugin(timestamp);
 
-const modelSchema = model('lottory-users', schema);
+const modelSchema = model('lottoryusers', schema);
 
 // Index fields
 modelSchema.ensureIndexes((err) => {
