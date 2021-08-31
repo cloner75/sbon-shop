@@ -33,7 +33,7 @@ export default class MrLottoryController {
     try {
       let orderId = await MrLottroyUserModel.count();
       orderId += 10000010;
-      const createOption = await MrLottroyUserModel.create({
+      let createOption = await MrLottroyUserModel.create({
         userId: req.user._id,
         ...req.body,
         status: 0,
@@ -60,10 +60,8 @@ export default class MrLottoryController {
               token: result.SalePaymentRequestResult.Token
             }
           });
-          Object.assign(createOption, {
-            token: result.SalePaymentRequestResult.Token,
-            address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
-          });
+          createOption.token = result.SalePaymentRequestResult.Token;
+          createOption.address = process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token);
           console.log({ createOption });
           return reply.status(201).send(
             Response.generator(201, createOption, METHODS.CREATE, req.executionTime)
