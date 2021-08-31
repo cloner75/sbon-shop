@@ -45,8 +45,8 @@ export default class MrLottoryController {
           requestData: {
             LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
             Amount: 1500000,
-            orderId,
-            CallBackUrl: `https://sbon.ir/pay/${orderId}`
+            OrderId: orderId,
+            CallBackUrl: `https://sbon.ir/mrlottory/pay/${orderId}`
           }
         });
         if (result.SalePaymentRequestResult.Token === 0) {
