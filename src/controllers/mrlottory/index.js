@@ -76,4 +76,48 @@ export default class MrLottoryController {
       );
     }
   }
+
+
+
+  /**
+   * @description :: verify Pay
+   * @param {request} req 
+   * @param {reply} reply 
+   * @returns 
+   */
+  async verify(req, reply) {
+    try {
+      const { orderId } = req.body;
+      const getOrder = await MrLottroyUserModel.findOne({ orderId });
+      if (!getOrder) {
+        return reply.status(404).send(
+          Response.generator(404, { }, METHODS.VERIFY, req.executionTime)
+        );
+      }
+      strongSoap.soap.createClient("https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL", { }, async (_, client) => {
+        const { result } = await client.ConfirmPayment({
+          requestData: {
+            LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
+            Token: getOrder.token
+          }
+        });
+        if (result.ConfirmPaymentResult.Status == 0 && result.ConfirmPaymentResult.RRN) {
+          await MrLottroyUserModel.updateOne({ orderId }, {
+            $set: {
+              status: 1,
+              RRN: String(result.ConfirmPaymentResult.RRN)
+            }
+          });
+        } else if (result.ConfirmPaymentResult.Status !== -1533) {
+          await MrLottroyUserModel.updateOne({ orderId }, { $set: { status: 3 } });
+        }
+        return reply.redirect(301, `/payment/verify/${orderId}`);
+      });
+    } catch (err) {
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.VERIFY, req.executionTime, err)
+      );
+    }
+  }
+
 }
