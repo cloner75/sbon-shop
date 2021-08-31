@@ -8,7 +8,7 @@
     "build": "babel src -d build",
     "start:dev": "yarn build && NODE_ENV=development node build/index.js",
     "start:watch": "nodemon --exec  'yarn start:dev' --ignore ./build/",
-    "start": "pm2 start build/index.js -i 2 --name 'backend-sbon'",
+    "start": "yarn install && yarn build && pm2 start build/index.js -i 2 --name 'backend-sbon' --watch",
     "pretest": "eslint --ignore-path .gitignore .",
     "doc": "./node_modules/.bin/jsdoc ./src/controllers/"
   },
