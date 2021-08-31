@@ -39,7 +39,6 @@ export default class MrLottoryController {
         status: 0,
         orderId
       });
-      console.log({ createOption });
       strongSoap.soap.createClient(process.env.IPG_GET_TOKEN, { }, async (_, client) => {
         const { result } = await client.SalePaymentRequest({
           requestData: {
@@ -61,13 +60,13 @@ export default class MrLottoryController {
               token: result.SalePaymentRequestResult.Token
             }
           });
+          Object.assign(createOption, {
+            token: result.SalePaymentRequestResult.Token,
+            address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
+          });
+          console.log({ createOption });
           return reply.status(201).send(
-            Response.generator(201,
-              Object.assign(createOption, {
-                token: result.SalePaymentRequestResult.Token,
-                address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
-              }),
-              METHODS.CREATE, req.executionTime)
+            Response.generator(201, createOption, METHODS.CREATE, req.executionTime)
           );
         }
       });
