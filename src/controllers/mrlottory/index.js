@@ -62,9 +62,11 @@ export default class MrLottoryController {
           });
           createOption.token = result.SalePaymentRequestResult.Token;
           createOption.address = process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token);
-          console.log({ createOption });
           return reply.status(201).send(
-            Response.generator(201, createOption, METHODS.CREATE, req.executionTime)
+            Response.generator(201, createOption, {
+              token: result.SalePaymentRequestResult.Token,
+              address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
+            }, METHODS.CREATE, req.executionTime)
           );
         }
       });
