@@ -47,12 +47,12 @@ const schema = new Schema(
 schema.plugin(paginate);
 schema.plugin(timestamp);
 
-const modelSchema = model('lottoryusers', schema);
+const modelSchema = model('mrlottory', schema);
 
 // Index fields
 modelSchema.ensureIndexes((err) => {
   if (err) {
-    console.error('lottory-user model error :', err.message);
+    console.error('mrlottory model error :', err.message);
   }
 });
 
