@@ -26,6 +26,7 @@ export default {
       body: joi
         .object({
           name: joi.string().trim().required().messages(messages),
+          email: joi.string().trim().email().required().messages(messages),
           family: joi.string().trim().required().messages(messages),
           lastCertificate: joi.string().trim().required().messages(messages),
           gender: joi.string().trim().valid('male', 'female', 'other').required().messages(messages),
@@ -48,6 +49,18 @@ export default {
             number: joi.string().trim().messages(messages),
             expired: joi.string().trim().messages(messages),
           }).messages(messages),
+          spouse: joi.object({
+            name: joi.string().trim().messages(messages),
+            family: joi.string().trim().messages(messages),
+            lastCertificate: joi.string().trim().messages(messages),
+            birthday: joi.string().trim().messages(messages),
+            address: joi.string().trim().messages(messages),
+            passport: joi.object({
+              picture: joi.string().trim().messages(messages),
+              number: joi.string().trim().messages(messages),
+              expired: joi.string().trim().messages(messages)
+            })
+          })
         })
     },
     validatorCompiler: ({ schema }) => {
