@@ -33,6 +33,16 @@ export default class MrLottoryController {
     try {
       let orderId = await MrLottroyUserModel.count();
       orderId += 10000010;
+      if (req.body.childs.length > 3) {
+        return reply.send(
+          Response.generator(
+            400,
+            { message: 'child error' },
+            METHODS.CREATE,
+            req.executionTime
+          )
+        );
+      }
       let createOption = await MrLottroyUserModel.create({
         userId: req.user._id,
         ...req.body,
