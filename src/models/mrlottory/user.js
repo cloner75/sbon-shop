@@ -18,6 +18,18 @@ const schema = new Schema(
     picture: { type: String, required: false },
     maritalStatus: { type: String, required: false },
     countChild: { type: String, required: false },
+    spouse: {
+      name: { type: String, required: false },
+      family: { type: String, required: false },
+      lastCertificate: { type: String, required: false },
+      birthday: { type: String, required: false },
+      address: { type: String, required: false },
+      passport: {
+        picture: { type: String, required: false },
+        number: { type: String, required: false },
+        expired: { type: String, required: false }
+      },
+    },
     childs: [{
       name: { type: String, required: false },
       family: { type: String, required: false },
@@ -37,6 +49,7 @@ const schema = new Schema(
     orderId: { type: String, rqeuired: false },
     RRN: { type: String, rqeuired: false },
     token: { type: String, rqeuired: false },
+    email: { type: String, required: true }
   },
   {
     minimize: false,
