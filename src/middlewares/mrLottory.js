@@ -48,6 +48,7 @@ export default {
           passport: joi.object({
             number: joi.string().trim().messages(messages),
             expired: joi.string().trim().messages(messages),
+            picture: joi.string().trim().messages(messages),
           }).messages(messages),
           spouse: joi.object({
             name: joi.string().trim().messages(messages),

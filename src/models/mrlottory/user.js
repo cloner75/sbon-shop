@@ -43,6 +43,7 @@ const schema = new Schema(
     passport: {
       number: { type: String, rqeuired: false },
       expired: { type: String, rqeuired: false },
+      picture: { type: String, rqeuired: false },
     },
     status: { type: Number, required: false, default: 0 },// 0 => not Pay , 1 => Payeid
     userId: { type: Schema.Types.ObjectId, required: false },
