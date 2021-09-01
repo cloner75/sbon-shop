@@ -73,7 +73,7 @@ export default class MrLottoryController {
           createOption.token = result.SalePaymentRequestResult.Token;
           createOption.address = process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token);
           return reply.status(201).send(
-            Response.generator(201, createOption, {
+            Response.generator(201, {
               token: result.SalePaymentRequestResult.Token,
               address: process.env.IPG_TRANSACTION_URL.concat(result.SalePaymentRequestResult.Token)
             }, METHODS.CREATE, req.executionTime)
