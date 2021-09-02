@@ -118,10 +118,20 @@ export default class MrLottoryController {
               RRN: String(result.ConfirmPaymentResult.RRN)
             }
           });
+          return reply.status(200).send(
+            Response.generator(200, {
+              status: 1,
+              RRN: String(result.ConfirmPaymentResult.RRN)
+            }, METHODS.VERIFY, req.executionTime)
+          );
         } else if (result.ConfirmPaymentResult.Status !== -1533) {
           await MrLottroyUserModel.updateOne({ orderId }, { $set: { status: 3 } });
+          return reply.status(400).send(
+            Response.generator(400, {
+              status: 3,
+            }, METHODS.VERIFY, req.executionTime)
+          );
         }
-        return reply.redirect(301, `/payment/verify/${orderId}`);
       });
     } catch (err) {
       return reply.status(500).send(
