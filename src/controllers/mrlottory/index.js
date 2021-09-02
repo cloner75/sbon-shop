@@ -32,7 +32,7 @@ export default class MrLottoryController {
   async createUser(req, reply) {
     try {
       let orderId = await MrLottroyUserModel.count();
-      orderId += 10000010;
+      orderId += 10000110;
       if (req.body.childs && req.body.childs.length && req.body.childs.length > 3) {
         return reply.send(
           Response.generator(
