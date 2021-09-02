@@ -33,7 +33,7 @@ export default class MrLottoryController {
     try {
       let orderId = await MrLottroyUserModel.count();
       orderId += 10000010;
-      if (req.body.childs.length > 3) {
+      if (req.body.childs && req.body.childs.length && req.body.childs.length > 3) {
         return reply.send(
           Response.generator(
             400,
