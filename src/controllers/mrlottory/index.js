@@ -126,8 +126,9 @@ export default class MrLottoryController {
           );
         } else if (result.ConfirmPaymentResult.Status !== -1533) {
           await MrLottroyUserModel.updateOne({ orderId }, { $set: { status: 3 } });
-          return reply.status(400).send(
-            Response.generator(400, {
+          return reply.status(200).send(
+            Response.generator(200, {
+              ...result.ConfirmPaymentResult,
               status: 3,
             }, METHODS.VERIFY, req.executionTime)
           );
