@@ -35,6 +35,12 @@ export default class Product {
   async find(req, reply) {
     try {
       const { productsId, ...query } = req.query;
+      if (!query.order && !query.sort) {
+        Object.assign(query, {
+          order: 'skus.stock',
+          sort: 'DESC'
+        });
+      }
       const { where, options } = MongoHelper.initialMongoQuery(query, PRODUCT);
       if (productsId) {
         const ids = productsId.split(',').filter(item => /^[0-9a-fA-F]{24}$/.test(item.trim()));
