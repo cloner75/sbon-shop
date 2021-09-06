@@ -142,7 +142,7 @@ export default class Product {
       }
       Object.assign(searchBox, { status: { $ne: 4 } });
       if (!req.query.order && !req.query.sort) {
-        Object.assign(query, {
+        Object.assign(req.query, {
           order: 'skus.stock',
           sort: 'DESC'
         });
