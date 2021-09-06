@@ -141,6 +141,12 @@ export default class Product {
           break;
       }
       Object.assign(searchBox, { status: { $ne: 4 } });
+      if (!query.order && !query.sort) {
+        Object.assign(query, {
+          order: 'skus.stock',
+          sort: 'DESC'
+        });
+      }
       const { options } = MongoHelper.initialMongoQuery(req.query, PRODUCT);
       const result = await ProductModel.paginate(searchBox, options);
       return reply.send(
