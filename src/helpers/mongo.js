@@ -79,9 +79,9 @@ class Mongo {
       }
     }
     if (order) {
-      Object.assign(result.options, { sort: { [order]: sort || SORT } });
+      Object.assign(result.options, { sort: { [order]: `${sort}` || SORT } });
     } else {
-      Object.assign(result.options, { sort: { [ORDER_DEFAULT]: sort || SORT } });
+      Object.assign(result.options, { sort: { [ORDER_DEFAULT]: `${sort}` || SORT } });
     }
     return result;
   }
