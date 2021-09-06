@@ -34,13 +34,13 @@ export default class Product {
    */
   async find(req, reply) {
     try {
-      const { productsId, ...query } = req.query;
-      // if (!query.order && !query.sort) {
-      //   Object.assign(query, {
-      //     order: 'skus.stock',
-      //     sort: 'DESC'
-      //   });
-      // }
+      let { productsId, ...query } = req.query;
+      if (!query.order && !query.sort) {
+        Object.assign(query, {
+          order: 'skus.stock',
+          sort: 'DESC'
+        });
+      }
       const { where, options } = MongoHelper.initialMongoQuery(query, PRODUCT);
       if (productsId) {
         const ids = productsId.split(',').filter(item => /^[0-9a-fA-F]{24}$/.test(item.trim()));
@@ -141,12 +141,12 @@ export default class Product {
           break;
       }
       Object.assign(searchBox, { status: { $ne: 4 } });
-      // if (!req.query.order && !req.query.sort) {
-      //   Object.assign(req.query, {
-      //     order: 'skus.stock',
-      //     sort: 'DESC'
-      //   });
-      // }
+      if (!req.query.order && !req.query.sort) {
+        Object.assign(req.query, {
+          order: 'skus.stock',
+          sort: 'DESC'
+        });
+      }
       const { options } = MongoHelper.initialMongoQuery(req.query, PRODUCT);
       const result = await ProductModel.paginate(searchBox, options);
       return reply.send(
