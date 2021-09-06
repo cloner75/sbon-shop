@@ -235,6 +235,9 @@ export default {
     // product services
     product: [
       '_id',
+      'isFake',
+      'priority',
+      'referenceId',
       'keyWords',
       'brandId',
       'categoriesId',
@@ -249,6 +252,7 @@ export default {
       'images',
       'attributes',
       'skus',
+      'skus.stock',
       'createdAt',
       'updatedAt'
     ],
