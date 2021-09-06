@@ -79,11 +79,9 @@ class Mongo {
       }
     }
     if (order) {
-      console.log('order => ', `${sort}` !== 'undefined', sort, { [order]: `${sort}` != 'undefined' ? `${sort}` : SORT });
-      Object.assign(result.options, { sort: { [order]: `${sort}` !== 'undefined' ? `${sort}` : SORT } });
+      Object.assign(result.options, { sort: { [order]: sort || SORT } });
     } else {
-      console.log('not order => ', `${sort}` != 'undefined', sort, { [ORDER_DEFAULT]: `${sort}` !== 'undefined' ? `${sort}` : SORT });
-      Object.assign(result.options, { sort: { [ORDER_DEFAULT]: `${sort}` !== 'undefined' ? `${sort}` : SORT } });
+      Object.assign(result.options, { sort: { [ORDER_DEFAULT]: sort || SORT } });
     }
     return result;
   }
