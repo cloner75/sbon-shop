@@ -29,6 +29,11 @@ export default {
           .object({
             titleFa: joi.string().trim().required(),
             titleEn: joi.string().trim().required(),
+            isFake: joi.boolean(),
+            priority: joi.number(),
+            referenceId: joi
+              .string()
+              .pattern(/^[0-9a-fA-F]{24}$/),
             brandId: joi
               .string()
               .trim()
