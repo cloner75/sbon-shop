@@ -46,7 +46,7 @@ export default class Product {
         const ids = productsId.split(',').filter(item => /^[0-9a-fA-F]{24}$/.test(item.trim()));
         Object.assign(where, { _id: { $in: ids } });
       }
-      const result = await ProductModel.paginate({ ...where, isShow: true, status: { $ne: 4 } }, options);
+      const result = await ProductModel.paginate({ ...where, status: { $ne: 4 } }, options);
       return reply.send(
         Response.generator(200, result, METHODS.FIND, req.executionTime)
       );
@@ -140,7 +140,7 @@ export default class Product {
           });
           break;
       }
-      Object.assign(searchBox, { isShow: true, status: { $ne: 4 } });
+      Object.assign(searchBox, { status: { $ne: 4 } });
       // if (!req.query.order && !req.query.sort) {
       //   Object.assign(req.query, {
       //     order: 'skus.stock',
