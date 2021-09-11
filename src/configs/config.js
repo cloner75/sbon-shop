@@ -252,6 +252,7 @@ export default {
       'images',
       'attributes',
       'skus',
+      'shortid',
       'skus.stock',
       'createdAt',
       'updatedAt'
