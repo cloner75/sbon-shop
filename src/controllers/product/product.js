@@ -250,4 +250,48 @@ export default class Product {
       );
     }
   }
+
+  /**
+   * @description :: update shortid
+   * @param {request} req 
+   * @param {reply} reply 
+   * @returns 
+   */
+  async updateShortid(req, reply) {
+    try {
+      const result = await ProductModel.find({});
+      let shortid = 20000;
+      for (let item of result) {
+        const test = await ProductModel.updateOne({ _id: item._id }, { $set: { shortid: 'sbn-' + shortid++ } });
+      }
+      return reply.status(200).send(
+        Response.generator(200, result, 'updateShortid', req.executionTime)
+      );
+    } catch (err) {
+      return reply.status(500).send(
+        Response.ErrorHandler('updateShortid', req.executionTime, err)
+      );
+    }
+  }
+
+
+  /**
+   * @description :: redirect shortlink
+   * @param {request} req 
+   * @param {reply} reply 
+   * @returns 
+   */
+  async redirectShortLink(req, reply) {
+    try {
+      const { shortid } = req.params;
+      let getUrl = await ProductModel.findOne({ shortid });
+      return reply.status(301).redirect(getUrl ? `/${getUrl._id}/${getUrl.slug}` : '/search');
+    } catch (err) {
+      return reply.status(500).send(
+        Response.ErrorHandler('updateShortid', req.executionTime, err)
+      );
+    }
+  }
+
+
 }
