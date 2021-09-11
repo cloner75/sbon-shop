@@ -6,6 +6,8 @@ import fs from 'fs';
 import CronJobs from './cronjob';
 import Redis from './redis';
 
+// Models
+import ProductModel from './../models/product/product';
 
 /**
  * @description :: Class For Connection Service
@@ -82,6 +84,21 @@ class Connection {
     this.app.register(require('../routers/mrLottory'), {
       logLevel: process.env.LOG_LEVEL,
       prefix: '/api/v1/mrlottory'
+    });
+
+
+    this.app.get('/v/:shortid', async (req, reply) => {
+      try {
+        const { shortid } = req.params;
+        if (!shortid) {
+          return reply.status(301).redirect('/search');
+        }
+        let getUrl = await ProductModel.findOne({ shortid });
+        return reply.status(301).redirect(getUrl ? `/product/${getUrl._id}/${getUrl.slug}` : '/search');
+      } catch (err) {
+        console.log(err);
+        return reply.status(301).redirect('/search');
+      }
     });
 
     this.app.get('/sitemap.xml', (req, reply) => {
