@@ -185,7 +185,12 @@ export default class Product {
    */
   async create(req, reply) {
     try {
-      const result = await ProductModel.create({ ...req.body, ownerId: req.user._id });
+      const getLastProduct = await ProductModel.findOne({}, {}, { sort: { 'createdAt': -1 } });
+      let shortid = 'sbn-20000';
+      if (getLastProduct) {
+        shortid = 'sbn-' + (Number(getLastProduct.shortid.split('-')[1]) + 1);
+      }
+      const result = await ProductModel.create({ ...req.body, shortid, ownerId: req.user._id });
       return reply.status(200).send(
         Response.generator(200, result, METHODS.CREATE, req.executionTime)
       );
