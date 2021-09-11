@@ -36,7 +36,8 @@ export default (fastify, _opts, done) => {
   fastify.post('/create', middle.pro.create, Product.create);
   fastify.put('/update/:id', middle.pro.update, Product.update);
   fastify.delete('/remove/:id', middle.pro.delete, Product.remove);
-
+  fastify.put('/update/shortid', Product.updateShortid);
+    
   // Comment
   fastify.get('/comment/get', middle.com.find, Comment.find);
   fastify.get('/comment/get/public', middle.com.find, Comment.findPublic);
