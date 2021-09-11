@@ -146,7 +146,7 @@ export default class Product {
           order: 'skus.stock',
           sort: 'DESC'
         });
-      s}
+      }
       const { options } = MongoHelper.initialMongoQuery(req.query, PRODUCT);
       const result = await ProductModel.paginate(searchBox, options);
       return reply.send(
