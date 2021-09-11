@@ -253,7 +253,6 @@ export default {
       'attributes',
       'skus',
       'shortid',
-      'skus.stock',
       'createdAt',
       'updatedAt'
     ],
