@@ -9,6 +9,7 @@ set('useCreateIndex', true);
 
 const schema = new Schema(
   {
+    shortid: { type: String, required: true, index: true},
     titleFa: { type: String, required: true, index: true },
     titleEn: { type: String, required: true, index: true },
     brandId: { type: Schema.Types.ObjectId, required: true, index: true },
