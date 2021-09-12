@@ -13,15 +13,18 @@ const schema = new Schema(
         slug: { type: String, required: true },
         image: { type: String, required: false },
         banner: { type: String, required: false },
+        description: { type: String, required: false },
         sub: [
             {
                 name: { type: String, required: true },
                 slug: { type: String, required: true },
                 image: { type: String, required: false },
+                description: { type: String, required: false },
                 banner: { type: String, required: false },
                 sub: [
                     {
                         name: { type: String, required: true },
+                        description: { type: String, required: false },
                         slug: { type: String, required: true },
                         image: { type: String, required: false },
                         banner: { type: String, required: false },

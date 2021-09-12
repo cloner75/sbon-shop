@@ -277,7 +277,8 @@ export default {
       'sub',
       'slug',
       'image',
-      'banner'
+      'banner',
+      'description',
     ],
     brand: [
       '_id',
