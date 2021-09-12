@@ -17,6 +17,32 @@ const METHODS = {
   UPDATE: 'update'
 };
 
+function getIndex(input, where) {
+  let result = null;
+  for (let item of input) {
+    if (item.slug && item.slug === where) {
+      result = item;
+      break;
+    } else {
+      for (let itemLevel2 of item.sub) {
+        if (itemLevel2.slug && itemLevel2.slug === where) {
+          result = itemLevel2;
+          break;
+        } else {
+          for (let itemLevel3 of itemLevel2.slug) {
+            if (itemLevel3.slug && itemLevel3.slug === where) {
+              result = itemLevel3;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+  return result;
+}
+
+
 /**
  * @description :: The Controller service
  *
@@ -33,8 +59,12 @@ export default class Category {
    */
   async find(req, reply) {
     try {
-      const { where, options } = MongoHelper.initialMongoQuery(req.query, CATEGORY);
-      const result = await CategoryModel.paginate(where, options);
+      const { slug, ...rest } = req.query;
+      const { where, options } = MongoHelper.initialMongoQuery(rest, CATEGORY);
+      let result = await CategoryModel.paginate(where, options);
+      if (slug) {
+        result = getIndex(result.docs, slug);
+      }
       return reply.send(
         Response.generator(200, result, METHODS.FIND, req.executionTime)
       );
