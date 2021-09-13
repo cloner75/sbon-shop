@@ -124,11 +124,13 @@ export default class Category {
       const data = {
         name,
         sub,
-        description,
         image,
         banner,
         ownerId: req.user._id
       };
+      if (description) {
+        Object.assign(data, { description });
+      }
       const result = await CategoryModel.findOneAndUpdate({ _id }, data, { new: true });
       return result ?
         reply.status(200).send(
