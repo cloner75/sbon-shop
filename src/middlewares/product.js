@@ -47,7 +47,7 @@ export default {
                 .required()
             ),
             keyWords: joi.array().items(joi.string().trim()),
-            description: joi.string().trim(),
+            description: joi.string(),
             body: joi.string().trim().required(),
             slug: joi.string().trim().required(),
             isShow: joi.bool(),
@@ -298,20 +298,20 @@ export default {
             slug: joi.string().trim().required(),
             image: joi.string().trim(),
             banner: joi.string().trim(),
-            description: joi.string().trim(),
+            description: joi.string(),
             sub: joi.array().items(
               joi.object({
                 name: joi.string().trim().required(),
                 slug: joi.string().trim().required(),
                 image: joi.string().trim(),
                 banner: joi.string().trim(),
-                description: joi.string().trim(),
+                description: joi.string(),
                 sub: joi.array().items(
                   joi.object({
                     name: joi.string().trim().required(),
                     slug: joi.string().trim().required(),
                     image: joi.string().trim(),
-                    description: joi.string().trim(),
+                    description: joi.string(),
                     banner: joi.string().trim(),
                   })),
               }))
@@ -337,7 +337,7 @@ export default {
             _id: joi.string().trim().pattern(/^[0-9a-fA-F]{24}$/),
             name: joi.string().trim().required(),
             slug: joi.string().trim().required(),
-            description: joi.string().trim(),
+            description: joi.string(),
             image: joi.string().trim(),
             banner: joi.string().trim(),
             sub: joi.array().items(
@@ -345,13 +345,13 @@ export default {
                 _id: joi.string().trim().pattern(/^[0-9a-fA-F]{24}$/),
                 name: joi.string().trim().required(),
                 banner: joi.string().trim(),
-                description: joi.string().trim(),
+                description: joi.string(),
                 slug: joi.string().trim().required(),
                 image: joi.string().trim(),
                 sub: joi.array().items(
                   joi.object({
                     _id: joi.string().trim().pattern(/^[0-9a-fA-F]{24}$/),
-                    description: joi.string().trim(),
+                    description: joi.string(),
                     name: joi.string().trim().required(),
                     slug: joi.string().trim().required(),
                     banner: joi.string().trim(),
