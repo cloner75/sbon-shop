@@ -78,21 +78,12 @@ async function refreshToken(req, reply, token) {
   }
   const { password, salt, phone, ...result } = getUser.toObject();
   token = await jwt.generate(result);
-  reply
-    .status(403)
-    .setCookie(
-      'access_token',
-      token,
-      cookieConfig
-    )
-    .send(
-      Response.generator(
-        403,
-        { message: 'jwt expired' },
-        'authorization',
-        req.executionTime
-      )
-    );
+  req.user = result;
+  reply.setCookie(
+    'access_token',
+    token,
+    cookieConfig
+  );
 }
 
 
