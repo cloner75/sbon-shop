@@ -29,6 +29,7 @@ export default (fastify, _opts, done) => {
 
   fastify.post('/register', Midd.register, User.register);
   fastify.post('/login', Midd.login, User.login);
+  fastify.post('/logout', User.logout);
   fastify.post('/token/refresh', User.refreshToken);
 
   fastify.get('/', Midd.find, User.find);
