@@ -98,7 +98,8 @@ export default class OrderController extends OfferService {
   async findSuperAdmin(req, reply) {
     try {
       const { where, options } = MongoHelper.initialMongoQuery(req.query, ORDER);
-      const result = await OrderModel.paginate({ ...where, status: 1 }, options);
+      // const result = await OrderModel.paginate({ ...where, status: 1 }, options);
+      const result = await OrderModel.paginate( where , options);
       return reply.status(200).send(
         Response.generator(200, result, METHODS.FIND_SUPER_ADMIN, req.executionTime)
       );
