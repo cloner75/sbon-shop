@@ -564,8 +564,10 @@ export default class UserController {
    */
   async logout(req, reply) {
     try {
-
+      reply.clearCookie('access_token');
+      return reply.status(200).send(Response.generator(200, {}, METHODS.logout, req.executionTime));
     } catch (err) {
+      return reply.status(500).send(Response.ErrorHandler(METHODS.logot, req.executionTime, err));
 
     }
   }
