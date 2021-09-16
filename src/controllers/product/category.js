@@ -29,7 +29,7 @@ function getIndex(input, where) {
           result = itemLevel2;
           break;
         } else {
-          for (let itemLevel3 of itemLevel2.slug) {
+          for (let itemLevel3 of itemLevel2.sub) {
             if (itemLevel3.slug && itemLevel3.slug === where) {
               result = itemLevel3;
               break;
