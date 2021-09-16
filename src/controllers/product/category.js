@@ -119,9 +119,10 @@ export default class Category {
    */
   async update(req, reply) {
     try {
-      const { sub, description, name, image, banner } = req.body;
+      const { sub, description, name, image, banner, slug } = req.body;
       const _id = req.params.id;
       const data = {
+        slug,
         name,
         sub,
         image,
