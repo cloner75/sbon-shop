@@ -385,4 +385,14 @@ export default {
     isAuth: true,
     name: 'mrlottory-create'
   },
+
+  /**
+   * @description management
+   */
+
+  '/api/v1/management/get/products/cvs':{
+    method: 'GET',
+    isAuth: false,
+    name: 'management-get-products-csv'
+  }
 };
