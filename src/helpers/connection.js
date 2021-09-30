@@ -85,6 +85,10 @@ class Connection {
       logLevel: process.env.LOG_LEVEL,
       prefix: '/api/v1/mrlottory'
     });
+    this.app.register(require('../routers/management'), {
+      logLevel: process.env.LOG_LEVEL,
+      prefix: '/api/v1/management'
+    });
 
 
     this.app.get('/v/:shortid', async (req, reply) => {
