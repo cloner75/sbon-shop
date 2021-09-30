@@ -86,7 +86,8 @@ class Authorization {
       .execute('meta-create').on('POST')
       .execute('meta-remove').on('DELETE')
       .execute('meta-update').on('PUT')
-      .execute('meta-superadmin-get').on('GET');
+      .execute('meta-superadmin-get').on('GET')
+      .execute('management-get-products-csv').on('GET');
 
     return AC;
   }
