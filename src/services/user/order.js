@@ -85,7 +85,7 @@ export default class OrderService {
       sum,
       sbon: allSbon,
       orderId: Math.floor(Date.now()),
-      payment: sum + Number(process.env.POST_PRICE),
+      payment: sum > 300000 ? sum : sum + Number(process.env.POST_PRICE),
     });
     return { status: 200, response: Response.generator(200, createOrder, METHODS.singleOrderCreate, req.executionTime) };
   }
