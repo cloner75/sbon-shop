@@ -1,14 +1,12 @@
 // Packages
 import { parseAsync } from 'json2csv';
-import csvParser from 'csv-parser';
-import fs from 'fs';
 
 // Models
 import ProductModel from './../../models/product/product';
 
-// Helpers
+// Helper
+import MongoHelper from "./../../helpers/mongo";
 import ResponseGenerator from './../../helpers/response';
-
 
 // Consts
 const MANAGEMENT = 'management';
@@ -45,7 +43,11 @@ export default class ManagementController {
    */
   async getProductsCsv(req, reply) {
     try {
-      const products = await ProductModel.find();
+      const { options } = MongoHelper.initialMongoQuery({
+        order: 'skus.stock',
+        sort: 'DESC'
+      }, 'product');
+      const products = await ProductModel.paginate({}, options);
       let jsonData = [];
       products.map(product =>
         product.skus.map(sku => {
