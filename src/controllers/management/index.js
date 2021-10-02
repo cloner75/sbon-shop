@@ -45,11 +45,12 @@ export default class ManagementController {
     try {
       const { options } = MongoHelper.initialMongoQuery({
         order: 'skus.stock',
-        sort: 'DESC'
+        sort: 'DESC',
+        limit: 20000000000,
       }, 'product');
       const products = await ProductModel.paginate({}, options);
       let jsonData = [];
-      products.map(product =>
+      products.docs.map(product =>
         product.skus.map(sku => {
           jsonData.push({
             'name_fa': product.titleFa,
