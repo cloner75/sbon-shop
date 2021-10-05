@@ -18,6 +18,8 @@ const schema = new Schema(
     picture: { type: String, required: false },
     maritalStatus: { type: String, required: false },
     countChild: { type: String, required: false },
+    doubleChance: { type: Boolean, required: true, default: false },
+    amount: { type: String, required: true, default: 1500000 },
     spouse: {
       name: { type: String, required: false },
       family: { type: String, required: false },
