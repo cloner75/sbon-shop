@@ -43,17 +43,26 @@ export default class MrLottoryController {
           )
         );
       }
+      let amount = 1500000;
+      if (req.body.maritalStatus === 'married') {
+        amount += 500000;
+        if (req.body.doubleChance) {
+          amount *= 2;
+        }
+      }
       let createOption = await MrLottroyUserModel.create({
         userId: req.user._id,
         ...req.body,
         status: 0,
+        amount,
         orderId
       });
-      strongSoap.soap.createClient(process.env.IPG_GET_TOKEN, { }, async (_, client) => {
+      strongSoap.soap.createClient(process.env.IPG_GET_TOKEN, {}, async (_, client) => {
         const { result } = await client.SalePaymentRequest({
           requestData: {
             LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
-            Amount: 1500000,
+            Amount: amount,
+            // Amount: 1500000,
             OrderId: orderId,
             CallBackUrl: `https://sbon.ir/mrlottory/pay/${orderId}`
           }
@@ -101,10 +110,10 @@ export default class MrLottoryController {
       const getOrder = await MrLottroyUserModel.findOne({ orderId });
       if (!getOrder) {
         return reply.status(404).send(
-          Response.generator(404, { }, METHODS.VERIFY, req.executionTime)
+          Response.generator(404, {}, METHODS.VERIFY, req.executionTime)
         );
       }
-      strongSoap.soap.createClient("https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL", { }, async (_, client) => {
+      strongSoap.soap.createClient("https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?WSDL", {}, async (_, client) => {
         const { result } = await client.ConfirmPayment({
           requestData: {
             LoginAccount: process.env.IPG_LOGIN_ACCOUNT,
