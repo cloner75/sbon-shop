@@ -34,6 +34,7 @@ export default {
           placeOfBirthday: joi.string().trim().required().messages(messages),
           picture: joi.string().trim().required().messages(messages),
           maritalStatus: joi.string().trim().valid('married', 'single').required().messages(messages),
+          doubleChance: joi.boolean().required().messages(messages),
           countChild: joi.number().required().messages(messages),
           childs: joi.array().items(joi.object({
             name: joi.string().trim().messages(messages),
