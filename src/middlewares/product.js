@@ -315,7 +315,7 @@ export default {
                     banner: joi.string().trim(),
                   })),
               }))
-          })
+          }).unknown()
       }, validatorCompiler: ({ schema }) => {
         return (data) => schema.validate(data);
       },
