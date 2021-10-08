@@ -1,3 +1,6 @@
+// Packages
+import fs from "fs";
+import path from "path";
 
 // Models
 import ProductModel from "./../../models/product/product";
@@ -16,7 +19,8 @@ const METHODS = {
   SEARCH: 'search',
   FIND_ONE: 'find-one',
   REMOVE: 'remove',
-  UPDATE: 'update'
+  UPDATE: 'update',
+  UPDATE_BY_JSON: 'updated_by_json'
 };
 /**
  * @description :: The Controller service
@@ -221,6 +225,45 @@ export default class Product {
         reply.status(404).send(
           Response.generator(404, {})
         );
+    } catch (err) {
+      return reply.status(500).send(
+        Response.ErrorHandler(METHODS.UPDATE, req.executionTime, err)
+      );
+    }
+  }
+
+  /**
+   * @description :: update Documents
+   * @param {request} req 
+   * @param {Reply} reply 
+   */
+  async updateJson(req, reply) {
+    try {
+      let getJson = await fs.readFileSync(path.join(__dirname + './../../../csvjson.json'), 'utf8');
+      getJson = JSON.parse(getJson);
+      for (let item of getJson) {
+        await ProductModel.updateOne(
+          {
+            '_id': item.id,
+            'skus._id': item.skus_id
+          },
+          {
+            $set: {
+              'skus.$.price': +item.price,
+              'skus.$.sbon': +item.sbon,
+              'skus.$.stock': +item.stock,
+              'skus.$.discount': +item.discount,
+            }
+          });
+      }
+      return reply.status(200).send(
+        Response.generator(
+          200,
+          { data: 'updated by json' },
+          METHODS.UPDATE_BY_JSON,
+          req.executionTime
+        )
+      );
     } catch (err) {
       return reply.status(500).send(
         Response.ErrorHandler(METHODS.UPDATE, req.executionTime, err)
