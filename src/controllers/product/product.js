@@ -252,6 +252,7 @@ export default class Product {
               'skus.$.price': +item.price,
               'skus.$.sbon': +item.sbon,
               'skus.$.stock': +item.stock,
+              'skus.$.stock': 0,
               'skus.$.discount': +item.discount,
             }
           });
