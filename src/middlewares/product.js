@@ -29,6 +29,9 @@ export default {
           .object({
             titleFa: joi.string().trim().required(),
             titleEn: joi.string().trim().required(),
+            titleAffiliate: joi.object({ en: joi.string(), fa: joi.string() }),
+            titleVip: joi.object({ en: joi.string(), fa: joi.string() }),
+            titleColleague: joi.object({ en: joi.string(), fa: joi.string() }),
             isFake: joi.boolean(),
             priority: joi.number(),
             referenceId: joi
